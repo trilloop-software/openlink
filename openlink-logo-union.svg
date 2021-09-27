@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="62.5mm"
+   height="62.5mm"
+   viewBox="0 0 62.5 62.5"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
+   sodipodi:docname="openlink-logo-union.svg"
+   inkscape:export-filename="/Users/hold3n/trilloop/openlink/openlink.png"
+   inkscape:export-xdpi="162.56"
+   inkscape:export-ydpi="162.56"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="3.1108586"
+     inkscape:cx="141.27932"
+     inkscape:cy="163.62042"
+     inkscape:window-width="1990"
+     inkscape:window-height="1324"
+     inkscape:window-x="448"
+     inkscape:window-y="58"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect1224-1-5"
+       style="fill:#000000;stroke-width:19.9533;stroke-linejoin:round"
+       d="M 94.488281 37.796875 A 56.692912 56.692912 0 0 0 37.796875 94.488281 A 56.692912 56.692912 0 0 0 85.041016 150.30273 L 85.041016 150.36914 A 56.692911 56.692911 0 0 0 85.775391 150.46289 A 56.692912 56.692912 0 0 0 87.4375 150.67578 A 56.692911 56.692911 0 0 0 94.488281 151.18164 A 56.692911 56.692911 0 0 0 102.12891 150.61328 A 56.692912 56.692912 0 0 0 103.25586 150.4707 A 56.692911 56.692911 0 0 0 103.9375 150.38477 L 103.9375 150.31641 A 56.692912 56.692912 0 0 0 149.61523 107.7168 L 129.89062 107.7168 A 37.795276 37.795276 0 0 1 103.9375 130.93945 L 103.9375 85.041016 L 85.041016 85.041016 L 85.041016 130.9375 A 37.795276 37.795276 0 0 1 56.693359 94.488281 A 37.795276 37.795276 0 0 1 94.488281 56.693359 A 37.795276 37.795276 0 0 1 130.9375 85.041016 L 107.7168 85.041016 L 107.7168 103.9375 L 131.08398 103.9375 L 150.38477 103.9375 L 179.5293 103.9375 L 179.5293 198.42578 L 198.42578 198.42578 L 198.42578 103.9375 L 198.42578 85.041016 L 179.5293 85.041016 L 150.30273 85.041016 A 56.692912 56.692912 0 0 0 94.488281 37.796875 z M 85.041016 154.20312 L 85.041016 179.5293 L 85.041016 198.42578 L 103.9375 198.42578 L 175.74805 198.42578 L 175.74805 179.5293 L 103.9375 179.5293 L 103.9375 154.2168 A 60.472439 60.472439 0 0 1 94.488281 154.96094 A 60.472439 60.472439 0 0 1 85.041016 154.20312 z "
+       transform="scale(0.26458333)" />
+  </g>
+</svg>
