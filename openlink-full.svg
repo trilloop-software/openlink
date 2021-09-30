@@ -7,7 +7,7 @@
    viewBox="0 0 162 62.5"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="openlink-full.svg"
    inkscape:export-filename="/Users/hold3n/trilloop/openlink/openlink.png"
    inkscape:export-xdpi="162.56"
@@ -31,8 +31,8 @@
      inkscape:cy="235.30481"
      inkscape:window-width="1990"
      inkscape:window-height="1324"
-     inkscape:window-x="448"
-     inkscape:window-y="30"
+     inkscape:window-x="1239"
+     inkscape:window-y="80"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
@@ -41,11 +41,6 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       id="rect1224-1-5"
-       style="fill:#000000;stroke-width:19.9533;stroke-linejoin:round"
-       d="M 94.488281,37.796875 A 56.692912,56.692912 0 0 0 37.796875,94.488281 56.692912,56.692912 0 0 0 85.041016,150.30273 v 0.0664 a 56.692911,56.692911 0 0 0 0.734375,0.0937 56.692912,56.692912 0 0 0 1.662109,0.21289 56.692911,56.692911 0 0 0 7.050781,0.50586 56.692911,56.692911 0 0 0 7.640629,-0.56836 56.692912,56.692912 0 0 0 1.12695,-0.14258 56.692911,56.692911 0 0 0 0.68164,-0.0859 v -0.0684 A 56.692912,56.692912 0 0 0 149.61523,107.7168 H 129.89062 A 37.795276,37.795276 0 0 1 103.9375,130.93945 V 85.041016 H 85.041016 V 130.9375 A 37.795276,37.795276 0 0 1 56.693359,94.488281 37.795276,37.795276 0 0 1 94.488281,56.693359 37.795276,37.795276 0 0 1 130.9375,85.041016 H 107.7168 V 103.9375 h 23.36718 19.30079 29.14453 v 94.48828 h 18.89648 V 103.9375 85.041016 H 179.5293 150.30273 A 56.692912,56.692912 0 0 0 94.488281,37.796875 Z M 85.041016,154.20312 v 25.32618 18.89648 H 103.9375 175.74805 V 179.5293 H 103.9375 v -25.3125 a 60.472439,60.472439 0 0 1 -9.449219,0.74414 60.472439,60.472439 0 0 1 -9.447265,-0.75782 z"
-       transform="scale(0.26458333)" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:19.7556px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
@@ -57,5 +52,17 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7556px;font-family:Evolventa;-inkscape-font-specification:'Evolventa Bold';stroke-width:0.264583"
          x="61.788799"
          y="36.851212">OpenLink</tspan></text>
+    <path
+       id="rect1224-1-5-8"
+       style="fill:#4f2683;fill-opacity:1;stroke-width:3.95949;stroke-linejoin:round"
+       d="m 22.499495,22.499495 v 17.285254 a 14.999999,14.999999 0 0 0 2.500106,0.21497 14.999999,14.999999 0 0 0 2.500106,-0.21084 V 22.499495 Z m 0,18.299654 v 6.70037 5.00021 h 5.000212 8.499739 v -5.00021 h -8.499739 v -6.69675 a 16,16 0 0 1 -2.500106,0.19689 16,16 0 0 1 -2.500106,-0.20051 z" />
+    <path
+       id="path2171"
+       style="fill:#000000;stroke-width:5.76659;stroke-linejoin:round"
+       d="M 24.999601,10 A 15,15 0 0 0 10,24.999601 15,15 0 0 0 24.999601,39.999719 15,15 0 0 0 39.585273,28.499647 H 34.36647 a 10,10 0 0 1 -9.366869,6.500382 10,10 0 0 1 -9.999906,-10.000428 10,10 0 0 1 9.999906,-9.999906 10,10 0 0 1 10.000424,9.999906 10,10 0 0 1 -0.317812,2.500106 H 39.78888 A 15,15 0 0 0 39.999719,24.999601 15,15 0 0 0 24.999601,10 Z" />
+    <path
+       id="rect2424-1"
+       style="fill:#4f2683;fill-opacity:1;stroke-width:5.37853;stroke-linejoin:round"
+       d="m 28.499647,22.499495 v 5.000212 H 47.499518 V 47.499519 H 36.999386 v 5.00021 h 15.500345 v -5.00021 -19.999812 -5.000212 h -5.000213 z" />
   </g>
 </svg>
