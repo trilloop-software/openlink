@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="62.5mm"
+   height="62.5mm"
+   viewBox="0 0 62.5 62.5"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="openlink-logo-union.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.1997092"
+     inkscape:cx="176.15965"
+     inkscape:cy="132.29021"
+     inkscape:window-width="1990"
+     inkscape:window-height="1324"
+     inkscape:window-x="360"
+     inkscape:window-y="54"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect1224-1-5"
+       style="fill:#4f2683;stroke-width:14.965;stroke-linejoin:round;fill-opacity:1"
+       d="M 85.039062 85.039062 L 85.039062 150.36914 A 56.692912 56.692912 0 0 0 94.488281 151.18164 A 56.692912 56.692912 0 0 0 103.9375 150.38477 L 103.9375 85.039062 L 85.039062 85.039062 z M 85.039062 154.20312 L 85.039062 179.52734 L 85.039062 198.42578 L 103.9375 198.42578 L 136.0625 198.42578 L 136.0625 179.52734 L 103.9375 179.52734 L 103.9375 154.2168 A 60.47244 60.47244 0 0 1 94.488281 154.96094 A 60.47244 60.47244 0 0 1 85.039062 154.20312 z "
+       transform="scale(0.26458333)" />
+    <path
+       id="path2171"
+       style="fill:#000000;stroke-width:21.795;stroke-linejoin:round"
+       d="M 94.488281 37.796875 A 56.692913 56.692913 0 0 0 37.796875 94.488281 A 56.692913 56.692913 0 0 0 94.488281 151.18164 A 56.692913 56.692913 0 0 0 149.61523 107.7168 L 129.89062 107.7168 A 37.795276 37.795276 0 0 1 94.488281 132.28516 A 37.795276 37.795276 0 0 1 56.693359 94.488281 A 37.795276 37.795276 0 0 1 94.488281 56.693359 A 37.795276 37.795276 0 0 1 132.28516 94.488281 A 37.795276 37.795276 0 0 1 131.08398 103.9375 L 150.38477 103.9375 A 56.692913 56.692913 0 0 0 151.18164 94.488281 A 56.692913 56.692913 0 0 0 94.488281 37.796875 z "
+       transform="scale(0.26458333)" />
+    <path
+       id="rect2424-1"
+       style="fill:#4f2683;stroke-width:20.3283;stroke-linejoin:round;fill-opacity:1"
+       d="M 107.7168 85.039062 L 107.7168 103.9375 L 179.52734 103.9375 L 179.52734 179.52734 L 139.8418 179.52734 L 139.8418 198.42578 L 198.42578 198.42578 L 198.42578 179.52734 L 198.42578 103.9375 L 198.42578 85.039062 L 179.52734 85.039062 L 107.7168 85.039062 z "
+       transform="scale(0.26458333)" />
+  </g>
+</svg>
