@@ -10,5 +10,5 @@ Cargo.lock
 **/*.rs.bk
 
 # extras
-*.png
+logo/*.png
 .DS_Store
