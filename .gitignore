@@ -11,4 +11,5 @@ Cargo.lock
 
 # extras
 logo/*.png
+logo/tauri
 .DS_Store
