@@ -1,11 +1,11 @@
 {
   "package": {
-    "productName": "client",
+    "productName": "OpenLink",
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../dist",
-    "devPath": "../dist",
+    "distDir": "../src-yew/dist",
+    "devPath": "http://localhost:8080",
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
   },
