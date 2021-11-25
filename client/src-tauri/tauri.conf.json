@@ -1,11 +1,11 @@
 {
   "package": {
-    "productName": "OpenLink",
+    "productName": "openlink-client",
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../src-yew/dist",
-    "devPath": "http://localhost:8080",
+    "distDir": "Set automatically by Vue CLI plugin",
+    "devPath": "Set automatically by Vue CLI plugin",
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
   },
