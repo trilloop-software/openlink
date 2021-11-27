@@ -1,14 +1,26 @@
 <template>
     <div>
         <h1>Connected Devices</h1>
+        <h4>In the final product, data will be obtained in realtime from the backend server (located in the Pod Computer)</h4>
         <ul id="dynamic-list">
-          <li v-for="device in devices" :key="device.IP">
-            <DeviceInterface/>
-          </li>
+
+            <DeviceInterface v-for="device in devices" 
+              :device_type="device.type" 
+              :key="device.IP"
+            />
+
         </ul>
 
-        <button v-on:click="addItem()">add item</button>
-        <button v-on:click="removeItem()">remove item</button>
+
+
+        <label for="device-type">Choose Device Type</label>
+        <select name="device-type" id="device-type">
+          <option value="Battery">Battery</option>
+          <option value="Inverter">Inverter</option>
+          <option value="Custom">Custom</option>
+        </select>
+
+
     </div>
 
 </template>
@@ -18,35 +30,24 @@ import DeviceInterface from './DeviceInterface.vue'
 
 export default {
   name: 'DeviceManager',
-  // define methods under the `methods` object
+
+  // define functions that can be called 
   methods: {
-    addItem: function (){
-        var ul = document.getElementById("dynamic-list");
-        var li = document.createElement("DeviceInterface");
-        //var li = document.createElement("li");
-        //li.setAttribute('id','New Device');
-        //li.appendChild(document.createTextNode('New Device'));
-        ul.appendChild(li);
-    },
-    removeItem: function (){
-        var ul = document.getElementById("dynamic-list");
-        var item = document.getElementById('New Device');
-        ul.removeChild(item);
-    }
   },
   components: {
     DeviceInterface
   },
+  // define data that can be referenced
   data(){
     return{
       devices:
       [
-        {IP:"0", name:"Placeholder Device"},
-        {IP:"1", name:"Placeholder Device"},
-        {IP:"2", name:"Placeholder Device"},
+        {IP:"0", name:"Placeholder Device", type:"Battery"},
+        {IP:"1", name:"Placeholder Device", type:"Inverter"},
       ]
     }
   }
 }
+
 
 </script>
