@@ -8,19 +8,19 @@
 <style>
 </style>
 
-<script>
+<script lang="ts">
 import { invoke } from '@tauri-apps/api/tauri'
 
 export default {
-  name: 'Splash',
+  name: 'Login',
   setup: () => {
     function test() {
       invoke("test")
         .then((response) => {
-          alert('Successful: ' + response);
+          alert('Successful: ' + response)
         })
         .catch((error) => {
-          alert('Error:' + error);
+          alert('Error:' + error)
         })
     }
 

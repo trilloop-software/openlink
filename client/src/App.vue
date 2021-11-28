@@ -15,7 +15,7 @@
           OpenLink
         </q-toolbar-title>
 
-        <div>OpenLink v0.1</div>
+        <div>OpenLink v0.1.0</div>
       </q-toolbar>
     </q-header>
 
@@ -26,26 +26,26 @@
       class="bg-grey-2"
     >
       <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+        <!--<q-item-label header>Essential Links</q-item-label>-->
+        <q-item clickable tag="router-link" to="/dashboard">
           <q-item-section avatar>
-            <q-icon name="school" />
+            <q-icon name="dashboard" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
+            <q-item-label>Dashboard</q-item-label>
+            <q-item-label caption>Control & Telemetry</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://github.com/quasarframework/">
+        <q-item clickable tag="router-link" to="/configure">
           <q-item-section avatar>
-            <q-icon name="code" />
+            <q-icon name="settings" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
+            <q-item-label>Configure</q-item-label>
+            <q-item-label caption>Add, Modify & Remove Devices</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
+        <!--<q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
           <q-item-section avatar>
             <q-icon name="chat" />
           </q-item-section>
@@ -71,25 +71,23 @@
             <q-item-label>Twitter</q-item-label>
             <q-item-label caption>@quasarframework</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item>-->
       </q-list>
     </q-drawer>
 
     <q-page-container>
-      <Splash />
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from 'vue'
-import Splash from './components/Splash.vue'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
-    Splash
   },
 
   setup () {
