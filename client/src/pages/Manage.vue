@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <device-manager></device-manager>
+    Manage
   </q-page>
 </template>
 
@@ -8,13 +8,8 @@
 </style>
 
 <script lang="ts">
-import DeviceManager from '@/components/DeviceManager.vue';
-
 export default {
-  name: 'Configure',
-  components: {
-    DeviceManager
-  },
+  name: 'Manage',
   setup: () => {
 
     return {

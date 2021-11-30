@@ -1,8 +1,9 @@
-import { createRouter, createWebHashHistory } from "vue-router"
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Configure from '@/pages/Configure.vue'
 import Dashboard from '@/pages/Dashboard.vue'
 import Login from '@/pages/Login.vue'
+import Manage from '@/pages/Manage.vue'
 
 export default createRouter({
     history: createWebHashHistory(),
@@ -20,7 +21,12 @@ export default createRouter({
         {
             name: 'Login',
             path: '/login',
-            component: Login,
+            component: Login
+        },
+        {
+            name: 'Manage',
+            path: '/manage',
+            component: Manage
         },
         {
             path: '/.*',
