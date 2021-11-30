@@ -15,7 +15,7 @@ export default {
   name: 'Login',
   setup: () => {
     function test() {
-      invoke("test")
+      invoke('test')
         .then((response) => {
           alert('Successful: ' + response)
         })

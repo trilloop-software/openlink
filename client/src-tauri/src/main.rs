@@ -3,12 +3,12 @@
   windows_subsystem = "windows"
 )]
 mod cmd;
-use cmd::{test};
+use cmd::{test, stop, emergency_stop};
 
 fn main() {
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
-      test
+      test, stop, emergency_stop
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
