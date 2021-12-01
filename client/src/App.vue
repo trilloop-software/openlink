@@ -60,7 +60,7 @@
 
         <q-separator />
 
-        <q-item clickable to="/login">
+        <q-item clickable to="/start">
           <q-item-section avatar>
             <q-icon name="logout" />
           </q-item-section>

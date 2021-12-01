@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Configure from '@/pages/Configure.vue'
 import Dashboard from '@/pages/Dashboard.vue'
-import Login from '@/pages/Login.vue'
+import Start from '@/pages/Start.vue'
 import Manage from '@/pages/Manage.vue'
 
 export default createRouter({
@@ -19,9 +19,9 @@ export default createRouter({
             component: Dashboard
         },
         {
-            name: 'Login',
-            path: '/login',
-            component: Login
+            name: 'Start',
+            path: '/start',
+            component: Start
         },
         {
             name: 'Manage',
@@ -30,11 +30,11 @@ export default createRouter({
         },
         {
             path: '/.*',
-            redirect: '/login',
+            redirect: '/start',
         },
         {
             path: '/',
-            redirect: '/login',
+            redirect: '/start',
         },
     ]
 })
