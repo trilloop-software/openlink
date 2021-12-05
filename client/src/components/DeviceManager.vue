@@ -1,23 +1,27 @@
 <template>
     <div>
-        <h1>Connected Devices</h1>
-        <q-list bordered separator id="dynamic-list">
-          <q-item>
-            <DeviceInterface v-for="device in devices" 
-              :device_type="device.type" 
-              :name = "device.name" 
-              :key="device.IP"
-            />
-          </q-item>
-        </q-list>
+      <h2>Device Manager</h2>
 
-        <label for="device-type">Choose Device Type</label>
-        <select name="device-type" id="device-type">
-          <option value="Battery">Battery</option>
-          <option value="Inverter">Inverter</option>
-          <option value="Custom">Custom</option>
-        </select>
+      <h4>Connected Devices</h4>
+      <q-list bordered separator dense id="dynamic-list">
 
+        <DeviceInterface v-for="device in devices" 
+          :device_type="device.type" 
+          :name = "device.name" 
+          :key="device.IP"
+        />
+
+      </q-list>
+
+      <h4>Add New Device</h4>
+      <q-input v-model="text" label="IP Address" id="device-ip"/>
+      <label for="device-type">Choose Device Type</label>
+      <select name="device-type" id="device-type">
+        <option value="Battery">Battery</option>
+        <option value="Inverter">Inverter</option>
+        <option value="Custom">Custom</option>
+      </select>
+      <q-btn push color="primary" label="Add" @click="addDevice()" />
 
     </div>
 
@@ -49,11 +53,25 @@ export default {
         })
     }
 
+    function addDevice(){
+
+      let type = document.getElementById("device-type") as HTMLInputElement;
+
+      invoke("add_device",{deviceType:type.value})
+        .then((response) => {
+          alert('Successful: ' + response)
+        })
+        .catch((error) => {
+          alert('Error:' + error)
+        })
+    }
+
     //execute the function that allows for pinging devices
     getDeviceList();
 
     return {
       getDeviceList,
+      addDevice,
     }
   },
   // define data that can be referenced

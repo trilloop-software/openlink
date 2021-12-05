@@ -1,32 +1,35 @@
 <template>
-    <q-page class="justify-center items-left">
+    <q-item class="dense justify-center items-left">
         <h3> {{name}} </h3>
         <q-btn push color="primary" label="Ping Device" @click="pingDevice(name)" />
 
-        <div class = "generic-field">
-            <label for="ip_address">IP Address: </label>
-            <input name="ip_address">
-        </div>
+        <q-list>
 
-        <div class = "generic-field">
-            <label for="conection_metric">Metric for Connection Strength: </label>
-            <label name="conection_metric">______</label>
-        </div>
+            <q-item class = "generic-field">
+                <label for="ip_address">IP Address: </label>
+                <input name="ip_address">
+            </q-item>
 
-        <div class = "generic-field">
-            <label for="connection_status">Connection Status: </label>
-            <select name="connection_status" id="connection_status">
-            <option value="Safe">Safe (above safety threshold)</option>
-            <option value="Unsafe">Unsafe (below safety threshold)</option>
-            <option value="Offline">Offline (disconnected/not found)</option>
-            </select>
-        </div>
+            <q-item class = "generic-field">
+                <label for="conection_metric">Metric for Connection Strength: </label>
+                <label name="conection_metric">______</label>
+            </q-item>
 
-        <div class = "device-specific-field" v-for="field in getFields(device_type)" :key="field">
-            {{field}}: 
-        </div>
+            <q-item class = "generic-field">
+                <label for="connection_status">Connection Status: </label>
+                <select name="connection_status" id="connection_status">
+                <option value="Safe">Safe (above safety threshold)</option>
+                <option value="Unsafe">Unsafe (below safety threshold)</option>
+                <option value="Offline">Offline (disconnected/not found)</option>
+                </select>
+            </q-item>
 
-    </q-page>
+            <q-item class = "device-specific-field" v-for="field in getFields(device_type)" :key="field">
+                {{field}}: 
+            </q-item>
+        </q-list>
+
+    </q-item>
 
 </template>
 

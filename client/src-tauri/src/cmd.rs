@@ -33,3 +33,16 @@ pub fn ping_device(name:&str) -> String{
     //parsing the actual request
     return owned_string;
 }
+
+#[tauri::command]
+pub fn add_device(device_type:&str) -> String{
+
+    let mut owned_string: String = "Received request to add new device (".to_owned();
+    owned_string.push_str("Type: ");
+    owned_string.push_str(device_type);
+    owned_string.push_str(" )");
+
+    //return a string for now
+    //processing the packet is for sprint 2
+    return owned_string;
+}
