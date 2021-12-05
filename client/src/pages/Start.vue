@@ -20,6 +20,11 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { ref } from 'vue'
 
+/**
+ * For some reason, VS Code on John's PC cannot find '@/components/Connect.vue'
+ * Shows an error in the IDE
+ * But the app still runs fine
+ */
 import Connect from '@/components/Connect.vue'
 import Login from '@/components/Login.vue'
 

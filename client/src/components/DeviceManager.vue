@@ -2,14 +2,14 @@
     <div>
         <h1>Connected Devices</h1>
         <h4>In the final product, data will be obtained in realtime from the backend server (located in the Pod Computer)</h4>
-        <ul id="dynamic-list">
-
+        <q-list bordered separator id="dynamic-list">
+          <q-item>
             <DeviceInterface v-for="device in devices" 
               :device_type="device.type" 
               :key="device.IP"
             />
-
-        </ul>
+          </q-item>
+        </q-list>
 
 
 

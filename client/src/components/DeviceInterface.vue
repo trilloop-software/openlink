@@ -1,6 +1,7 @@
 <template>
-    <div>
+    <q-page class="justify-left items-left">
         <h2>Placeholder {{device_type}}</h2>
+        <q-btn push color="primary" label="Ping Device" @click="pingDevice" />
 
         <div class = "generic-field">
             <label for="ip_address">IP Address: </label>
@@ -25,17 +26,28 @@
             {{field}}: 
         </div>
 
-    </div>
+    </q-page>
 
 </template>
 
-<script>
+<script lang="ts">
+import { invoke } from '@tauri-apps/api/tauri'
+//import { ref } from 'vue'
+
 export default {
   name: 'DeviceInterface',
 
-  // define functions that can be called 
-  methods: {
-    getFields(type){
+  /**
+   * define necessary data structures and etc
+   * such as functions that can be called 
+   * such as data that can be referenced
+   */
+  setup: () => {
+
+    var battery_fields = ["Temperature", "Power"];
+    var inverter_fields = ["Inverter Field 1", "Inverter Field 2"];
+
+    function getFields(type){
         let fields = [];
         switch(type){
             case "Battery":
@@ -47,22 +59,31 @@ export default {
         }
         return fields;
     }
+
+    function pingDevice(){
+        invoke("test_ping_device")
+            .then((response) => {
+                alert('Successful: ' + response)
+            })
+            .catch((error) => {
+                alert('Error:' + error)
+            })
+    }
+
+    return {
+        getFields,
+        pingDevice,
+    }
   },
+  
   //parameters that can be passed in from external sources
   props: {
     device_type: String
   },
-    // define data that can be referenced
-  data(){
-    return{
-        battery_fields,
-        inverter_fields,
-    }
-  }
+
 }
 
-var battery_fields = ["Temperature", "Power"];
-var inverter_fields = ["Inverter Field 1", "Inverter Field 2"];
+
 
 </script>
 
