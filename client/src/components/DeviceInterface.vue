@@ -1,7 +1,7 @@
 <template>
-    <q-page class="justify-left items-left">
-        <h2>Placeholder {{device_type}}</h2>
-        <q-btn push color="primary" label="Ping Device" @click="pingDevice" />
+    <q-page class="justify-center items-left">
+        <h3> {{name}} </h3>
+        <q-btn push color="primary" label="Ping Device" @click="pingDevice(name)" />
 
         <div class = "generic-field">
             <label for="ip_address">IP Address: </label>
@@ -44,11 +44,22 @@ export default {
    */
   setup: () => {
 
-    var battery_fields = ["Temperature", "Power"];
-    var inverter_fields = ["Inverter Field 1", "Inverter Field 2"];
+    function pingDevice(name){
+
+      invoke("ping_device",{name:name})
+        .then((response) => {
+          alert('Successful: ' + response)
+        })
+        .catch((error) => {
+          alert('Error:' + error)
+        })
+    }
+
+    var battery_fields: string[] = ["Temperature", "Power"];
+    var inverter_fields: string[] = ["Inverter Field 1", "Inverter Field 2"];
 
     function getFields(type){
-        let fields = [];
+        let fields: string[] = [];
         switch(type){
             case "Battery":
                 fields = battery_fields;
@@ -60,25 +71,18 @@ export default {
         return fields;
     }
 
-    function pingDevice(){
-        invoke("test_ping_device")
-            .then((response) => {
-                alert('Successful: ' + response)
-            })
-            .catch((error) => {
-                alert('Error:' + error)
-            })
-    }
+
 
     return {
-        getFields,
         pingDevice,
+        getFields,
     }
   },
   
   //parameters that can be passed in from external sources
   props: {
-    device_type: String
+    name:String,
+    device_type: String,
   },
 
 }

@@ -4,13 +4,15 @@
 )]
 mod cmd;
 use cmd::{test};
-use cmd::{test_ping_device};
+use cmd::{get_device_list};
+use cmd::{ping_device};
 
 fn main() {
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
       test,
-      test_ping_device,
+      get_device_list,
+      ping_device,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

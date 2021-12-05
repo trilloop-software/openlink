@@ -1,17 +1,15 @@
 <template>
     <div>
         <h1>Connected Devices</h1>
-        <h4>In the final product, data will be obtained in realtime from the backend server (located in the Pod Computer)</h4>
         <q-list bordered separator id="dynamic-list">
           <q-item>
             <DeviceInterface v-for="device in devices" 
               :device_type="device.type" 
+              :name = "device.name" 
               :key="device.IP"
             />
           </q-item>
         </q-list>
-
-
 
         <label for="device-type">Choose Device Type</label>
         <select name="device-type" id="device-type">
@@ -25,28 +23,54 @@
 
 </template>
 
-<script>
+<script lang="ts">
+import { invoke } from '@tauri-apps/api/tauri'
 import DeviceInterface from './DeviceInterface.vue'
 
 export default {
   name: 'DeviceManager',
 
-  // define functions that can be called 
-  methods: {
-  },
-  components: {
-    DeviceInterface
+  /**
+   * define necessary data structures and etc
+   * such as functions that can be called 
+   * such as data that can be referenced
+   */
+  setup: () => {
+
+    //define the function that allows for retrieving devices
+    function getDeviceList(){
+
+      invoke("get_device_list")
+        .then((response) => {
+          alert('Successful: ' + response)
+        })
+        .catch((error) => {
+          alert('Error:' + error)
+        })
+    }
+
+    //execute the function that allows for pinging devices
+    getDeviceList();
+
+    return {
+      getDeviceList,
+    }
   },
   // define data that can be referenced
   data(){
     return{
+
+      //Placholder device data until we can figure out parsing packets received from backend
       devices:
       [
-        {IP:"0", name:"Placeholder Device", type:"Battery"},
-        {IP:"1", name:"Placeholder Device", type:"Inverter"},
+        {IP:"0", name:"Placeholder Battery", type:"Battery"},
+        {IP:"1", name:"Placeholder Inverter", type:"Inverter"},
       ]
     }
-  }
+  },
+  components: {
+    DeviceInterface
+  },
 }
 
 
