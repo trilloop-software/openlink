@@ -13,6 +13,7 @@
     "@quasar/extras": "^1.0.0",
     "@tauri-apps/api": "^1.0.0-beta.8",
     "core-js": "^3.6.5",
+    "ip-num": "^1.3.3",
     "quasar": "^2.0.0",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
