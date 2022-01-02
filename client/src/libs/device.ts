@@ -8,6 +8,12 @@ export enum DeviceType {
   Sensor = 'SENSOR'
 }
 
+export enum DeviceTypeIcon {
+  Battery = 'battery_full',
+  Inverter = 'bolt',
+  Sensor = 'speed'
+}
+
 export enum ConnectionStatus {
   Disconnected,
   Connected
@@ -26,6 +32,7 @@ export class DeviceFields {
 
 // common device properties
 export interface Device {
+  id: string
   name: string
   device_type: DeviceType
   icon: string
@@ -38,6 +45,9 @@ export interface Device {
 
 // common device functions to manipulate device properties
 export class DeviceFunctions {
+  generateID() { // TEMPORARY FUNCTION, MOVE TO RUST FRONTEND EVENTUALLY
+    return Math.random().toString(36).substring(2, 9)
+  }
   ping(name, ip, port) {
     invoke('ping_device', { name: name })
       .then((response) => {
@@ -52,9 +62,10 @@ export class DeviceFunctions {
 // *** MOVE THESE TO CLIENT SIDE CONFIG FILE/DATABASE ENTRY TO ALLOW USER MODIFICATIONS OF DEFAULTS + ADDITIONAL DEVICE TYPES EVENTUALLY
 // battery specific properties/functions
 export class Battery extends DeviceFunctions implements Device {
+  id = this.generateID()
   name = 'Battery 1'
   device_type = DeviceType.Battery
-  icon = 'battery_full'
+  icon = DeviceTypeIcon.Battery
   ip_address = new IPv4('127.0.0.1')
   port = new Uint16Array(1)
   connection_status = ConnectionStatus.Connected
@@ -65,9 +76,10 @@ export class Battery extends DeviceFunctions implements Device {
 
 // inverter specific properties/functions
 export class Inverter extends DeviceFunctions implements Device {
+  id = this.generateID()
   name = 'Inverter 1'
   device_type = DeviceType.Inverter
-  icon = 'bolt'
+  icon = DeviceTypeIcon.Inverter
   ip_address = new IPv4('127.0.0.1')
   port = new Uint16Array(1)
   connection_status = ConnectionStatus.Connected
@@ -78,9 +90,10 @@ export class Inverter extends DeviceFunctions implements Device {
 
 // sensor specific properties/functions
 export class Sensor extends DeviceFunctions implements Device {
+  id = this.generateID()
   name = 'Sensor 1'
   device_type = DeviceType.Sensor
-  icon = 'insights'
+  icon = DeviceTypeIcon.Sensor
   ip_address = new IPv4('127.0.0.1')
   port = new Uint16Array(1)
   connection_status = ConnectionStatus.Disconnected

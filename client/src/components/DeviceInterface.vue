@@ -104,7 +104,7 @@ export default {
   emits: ['configure-device', 'device-diagnostics'],
   setup: (props: any, context: any) => {
     function deviceConfigure(dev: Device) {
-      context.emit('configure-device', dev)
+      context.emit('configure-device', dev, false)
     }
 
     function deviceDiagnostics(dev: Device) {
@@ -123,7 +123,7 @@ export default {
 <style lang="sass" scoped>
 .device-card
   width: 100%
-  max-width: 450px
+  max-width: 470px
 
 .error
   color: 'red'
