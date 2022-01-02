@@ -1,30 +1,21 @@
+import { invoke } from '@tauri-apps/api/tauri'
 import { IPv4 } from 'ip-num/IPNumber'
 
 // *** custom types to use as device properties
-enum DeviceType {
-  BATTERY,
-  INVERTER,
-  SENSOR
+export enum DeviceType {
+  Battery = 'BATTERY',
+  Inverter = 'INVERTER',
+  Sensor = 'SENSOR'
 }
 
-enum ConnectionStatus {
-  DISCONNECTED,
-  CONNECTED
+export enum ConnectionStatus {
+  Disconnected,
+  Connected
 }
 
-enum DeviceStatus {
-  SAFE,
-  UNSAFE
-}
-
-// hacky way to enforce uint16 in typescript, might be a better way
-type PortNumber = number & {_type_: "PortNumber"}
-const port = (value: number): PortNumber => {
-  if (value < 0 || value > 65535) {
-    throw new Error(`${value} is not a valid port.`)
-  }
-
-  return value as PortNumber
+export enum DeviceStatus {
+  Unsafe,
+  Operational,
 }
 
 export class DeviceFields {
@@ -36,50 +27,64 @@ export class DeviceFields {
 // common device properties
 export interface Device {
   name: string
-  dev_type: DeviceType
+  device_type: DeviceType
+  icon: string
   ip_address: IPv4
-  port: PortNumber
-  conn_status: ConnectionStatus
-  dev_status: DeviceStatus
+  port: Uint16Array
+  connection_status: ConnectionStatus
+  device_status: DeviceStatus
   fields: Array<DeviceFields>
 }
 
 // common device functions to manipulate device properties
 export class DeviceFunctions {
-
+  ping(name, ip, port) {
+    invoke('ping_device', { name: name })
+      .then((response) => {
+        alert('Successful: ' + response)
+      })
+      .catch((error) => {
+        alert('Error: ' + error)
+      })
+  }
 }
 
+// *** MOVE THESE TO CLIENT SIDE CONFIG FILE/DATABASE ENTRY TO ALLOW USER MODIFICATIONS OF DEFAULTS + ADDITIONAL DEVICE TYPES EVENTUALLY
 // battery specific properties/functions
 export class Battery extends DeviceFunctions implements Device {
-  name = "Battery 1"
-  dev_type = DeviceType.BATTERY
-  ip_address = new IPv4("127.0.0.1")
-  port = port(0)
-  conn_status = ConnectionStatus.DISCONNECTED
-  dev_status = DeviceStatus.SAFE
+  name = 'Battery 1'
+  device_type = DeviceType.Battery
+  icon = 'battery_full'
+  ip_address = new IPv4('127.0.0.1')
+  port = new Uint16Array(1)
+  connection_status = ConnectionStatus.Connected
+  device_status = DeviceStatus.Operational
   fields = [{ field_name: 'Temperature', field_value: '' },
             { field_name: 'Power', field_value: '' }]
 }
 
 // inverter specific properties/functions
 export class Inverter extends DeviceFunctions implements Device {
-  name = "Inverter 1"
-  dev_type = DeviceType.INVERTER
-  ip_address = new IPv4("127.0.0.1")
-  port = port(0)
-  conn_status = ConnectionStatus.DISCONNECTED
-  dev_status = DeviceStatus.SAFE
+  name = 'Inverter 1'
+  device_type = DeviceType.Inverter
+  icon = 'bolt'
+  ip_address = new IPv4('127.0.0.1')
+  port = new Uint16Array(1)
+  connection_status = ConnectionStatus.Connected
+  device_status = DeviceStatus.Unsafe
   fields = [{ field_name: 'Inverter Field 1', field_value: '' },
             { field_name: 'Inverter Field 2', field_value: '' }]
 }
 
 // sensor specific properties/functions
 export class Sensor extends DeviceFunctions implements Device {
-  name = "Sensor 1"
-  dev_type = DeviceType.SENSOR
-  ip_address = new IPv4("127.0.0.1")
-  port = port(0)
-  conn_status = ConnectionStatus.DISCONNECTED
-  dev_status = DeviceStatus.SAFE
+  name = 'Sensor 1'
+  device_type = DeviceType.Sensor
+  icon = 'insights'
+  ip_address = new IPv4('127.0.0.1')
+  port = new Uint16Array(1)
+  connection_status = ConnectionStatus.Disconnected
+  device_status = DeviceStatus.Unsafe
   fields = []
 }
+// ***

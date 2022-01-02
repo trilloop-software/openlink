@@ -1,108 +1,130 @@
 <template>
-    <q-item class="dense justify-center items-left">
-        <h3> {{name}} </h3>
-        <q-btn push color="primary" label="Ping Device" @click="pingDevice(name)" />
+  <q-card class="device-card" flat bordered>
+    <q-item>
+      <q-card-section avatar>
+        <q-icon color="primary" :name="device.icon" size="lg" />
+      </q-card-section>
 
-        <q-list>
+      <q-card-section>
+        <q-item-label>{{ device.name }}</q-item-label>
+        <q-item-label caption>{{ device.device_type }}</q-item-label>
+      </q-card-section>
 
-            <q-item class = "generic-field">
-                <label for="ip_address">IP Address: </label>
-                <input name="ip_address">
-            </q-item>
+      <q-space />
 
-            <q-item class = "generic-field">
-                <label for="conection_metric">Metric for Connection Strength: </label>
-                <label name="conection_metric">______</label>
-            </q-item>
+      <q-card-actions>
+        <q-btn v-if="device.connection_status && device.device_status" 
+          color="green"
+          round
+          flat
+          dense
+          icon="check_circle"
+          @click="deviceDiagnostics(device)"
+        >
+          <q-tooltip>
+            Device is connected and operational
+          </q-tooltip>
+        </q-btn>
 
-            <q-item class = "generic-field">
-                <label for="connection_status">Connection Status: </label>
-                <select name="connection_status" id="connection_status">
-                <option value="Safe">Safe (above safety threshold)</option>
-                <option value="Unsafe">Unsafe (below safety threshold)</option>
-                <option value="Offline">Offline (disconnected/not found)</option>
-                </select>
-            </q-item>
+        <q-btn v-else              
+          color="red"
+          round
+          flat
+          dense
+          icon="warning"
+          @click="deviceDiagnostics(device)"
+        >
+          <q-tooltip>
+            Device is {{ device.connection_status ? 'connected' : 'disconnected' }} and
+            {{ device.device_status ? 'operational' : 'unsafe' }}
+          </q-tooltip>
+        </q-btn>
 
-            <q-item class = "device-specific-field" v-for="field in getFields(device_type)" :key="field">
-                {{field}}: 
-            </q-item>
-        </q-list>
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          icon="settings"
+          @click="deviceConfigure(device)"
+        />
 
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="expanded = !expanded"
+        />
+      </q-card-actions>
     </q-item>
 
+    <q-slide-transition>
+      <div v-show="expanded">
+        <q-separator />
+
+        <q-card-section>
+          <q-list dense separator>
+            <q-item class="fit row justify-between">
+              <q-item-section class="text-weight-bold">IP Address</q-item-section>
+              <q-item-section>{{ device.ip_address }}:{{ device.port }}</q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-weight-bold">Connection Status</q-item-section>
+              <q-item-section>{{ device.connection_status ? 'Connected' : 'Disconnected' }}</q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-weight-bold">Device Status</q-item-section>
+              <q-item-section>{{ device.device_status ? 'Operational' : 'Unsafe' }}</q-item-section>
+            </q-item>
+
+            <q-item v-for="f in device.fields" :key="f.field_name">
+              <q-item-section class="text-weight-bold">{{ f.field_name }}</q-item-section>
+              <q-item-section>{{ f.field_value }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </div>
+    </q-slide-transition>
+  </q-card>
 </template>
 
 <script lang="ts">
-import { invoke } from '@tauri-apps/api/tauri'
-//import { ref } from 'vue'
+import { ref, PropType } from 'vue'
+import { Device } from '@/libs/device'
 
 export default {
   name: 'DeviceInterface',
-
-  /**
-   * define necessary data structures and etc
-   * such as functions that can be called 
-   * such as data that can be referenced
-   */
-  setup: () => {
-
-    function pingDevice(name){
-
-      invoke("ping_device",{name:name})
-        .then((response) => {
-          alert('Successful: ' + response)
-        })
-        .catch((error) => {
-          alert('Error:' + error)
-        })
+  props: {
+    device: { type: Object as PropType<Device> }
+  },
+  emits: ['configure-device', 'device-diagnostics'],
+  setup: (props: any, context: any) => {
+    function deviceConfigure(dev: Device) {
+      context.emit('configure-device', dev)
     }
 
-    var battery_fields: string[] = ["Temperature", "Power"];
-    var inverter_fields: string[] = ["Inverter Field 1", "Inverter Field 2"];
-
-    function getFields(type){
-        let fields: string[] = [];
-        switch(type){
-            case "Battery":
-                fields = battery_fields;
-                break;
-            case "Inverter":
-                fields = inverter_fields;
-                break;
-        }
-        return fields;
+    function deviceDiagnostics(dev: Device) {
+      context.emit('device-diagnostics', dev)
     }
-
-
 
     return {
-        pingDevice,
-        getFields,
+      expanded: ref(false),
+      deviceConfigure,
+      deviceDiagnostics,
     }
-  },
-  
-  //parameters that can be passed in from external sources
-  props: {
-    name:String,
-    device_type: String,
-  },
-
+  }
 }
-
-
-
 </script>
 
-<style>
-    .generic-field{
-        text-align: left;
-        border-style: solid;
-        border-color: #460d86;
-    }
-    .device-specific-field{
-        text-align: left;
-        border-style: solid;
-        border-color: #9c9c9c;
-    }
+<style lang="sass" scoped>
+.device-card
+  width: 100%
+  max-width: 450px
+
+.error
+  color: 'red'
 </style>
