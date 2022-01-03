@@ -20,7 +20,7 @@
 
     <q-separator />
 
-    <div class="q-pa-md row justify-between q-gutter-md">
+    <div class="q-pa-md row justify-between items-start q-gutter-md">
       <device-interface v-for="device in deviceList" 
         :device="device"
         :key="device.name"
