@@ -102,13 +102,13 @@ export default {
     device: { type: Object as PropType<Device> }
   },
   emits: ['configure-device', 'device-diagnostics'],
-  setup: (props: any, context: any) => {
+  setup: (props: any, { emit }) => {
     function deviceConfigure(dev: Device) {
-      context.emit('configure-device', dev, false)
+      emit('configure-device', dev, false)
     }
 
     function deviceDiagnostics(dev: Device) {
-      context.emit('device-diagnostics', dev)
+      emit('device-diagnostics', dev)
     }
 
     return {

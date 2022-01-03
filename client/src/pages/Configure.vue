@@ -23,7 +23,7 @@
     <div class="q-pa-md row justify-between items-start q-gutter-md">
       <device-interface v-for="device in deviceList" 
         :device="device"
-        :key="device.name"
+        :key="device.id"
         @configure-device="configureDeviceDialog"
       />
     </div>
@@ -68,7 +68,7 @@ export default {
     const newDevice = ref(false)
     const showDialog = ref(false)
     const showAddDialog = ref(false)
-    const selectedDevice = ref<Device | null>(null)
+    const selectedDevice = ref(new Device)
 
     // show the add device dialog window
     function addDeviceDialog() {
@@ -78,27 +78,34 @@ export default {
 
     // show the configure device dialog window
     function configureDeviceDialog(dev: Device, newDev: boolean) {
-      selectedDevice.value = dev
+      selectedDevice.value.clone(dev)
       newDevice.value = newDev ? true : false
       showDialog.value = true
     }
     
     // TODO: implement in rust frontend + backend
     function addDeviceToPod(dev: Device) {
-      deviceList.value.push(dev)
+      const tempDev = new Device
+      tempDev.clone(dev)
+      deviceList.value.push(tempDev)
       showDialog.value = false
+      selectedDevice.value.clear()
     }
 
     // TODO: implement in rust frontend + backend
     function modifyPodDevice(dev: Device) {
-      deviceList[deviceList.value.findIndex(el => el.id === dev.id)] = dev
+      const tempDev = new Device
+      tempDev.clone(dev)
+      deviceList.value[deviceList.value.findIndex(el => el.id == dev.id)] = tempDev
       showDialog.value = false
+      selectedDevice.value.clear()
     }
 
     // TODO: implement in rust frontend + backend
     function removeDeviceFromPod(dev: Device) {
-      deviceList.value.splice(deviceList.value.findIndex(el => el.id === dev.id), 1)
+      deviceList.value.splice(deviceList.value.findIndex(el => el.id == dev.id), 1)
       showDialog.value = false
+      selectedDevice.value.clear()
     }
 
     return {

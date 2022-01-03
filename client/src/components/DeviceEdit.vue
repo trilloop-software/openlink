@@ -8,8 +8,8 @@
       </q-bar>
 
       <q-card-section class="column justify-center items-center">
-        <q-icon color="primary" :name="device.icon" size="4rem" />
-        <q-item-label caption>{{ device.device_type }}</q-item-label>
+        <q-icon color="primary" :name="activeDevice.icon" size="4rem" />
+        <q-item-label caption>{{ activeDevice.device_type }}</q-item-label>
       </q-card-section>
       <q-card-section class="q-gutter-y-md">
         <q-input
@@ -27,7 +27,7 @@
         <q-input
           dense
           filled
-          v-model="activeDevice.port[0]"
+          v-model="activeDevice.port"
           label="Port"
         />
       </q-card-section>
@@ -107,7 +107,7 @@ export default {
       removeDevice,
       showDialog: useModelWrapper(props, emit, 'show'),
       newDevice: useModelWrapper(props, emit, 'new'),
-      activeDevice: useModelWrapper(props, emit, 'device')
+      activeDevice: useModelWrapper(props, emit, 'device'),
     }
   }
 }
