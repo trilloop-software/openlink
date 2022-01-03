@@ -36,6 +36,9 @@
             <q-item-label caption>Controls & Telemetry</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-separator />
+        
         <q-item clickable to="/configure">
           <q-item-section avatar>
             <q-icon name="settings" />

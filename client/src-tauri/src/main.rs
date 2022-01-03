@@ -3,11 +3,10 @@
   windows_subsystem = "windows"
 )]
 mod cmd;
-use cmd::{test, ping_device, add_device, stop, emergency_stop};
+use cmd::{test, ping_device, add_device, stop, emergency_stop, launch, set_destination};
 
 mod api_svc;
 use api_svc::{get_device_list};
-
 
 fn main() {
   tauri::Builder::default()
@@ -16,9 +15,10 @@ fn main() {
       get_device_list,
       ping_device,
       add_device,
-      test,
       stop,
-      emergency_stop
+      emergency_stop,
+      set_destination,
+      launch
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

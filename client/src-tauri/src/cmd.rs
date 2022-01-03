@@ -48,3 +48,15 @@ pub fn add_device(device_type:&str) -> String{
     //processing the packet is for sprint 2
     return owned_string;
 }
+
+#[command]
+pub fn launch() -> String 
+{
+    "Start command sent".to_string()
+}
+
+#[command]
+pub fn set_destination() -> String 
+{
+    "Set course destionation command sent".to_string()
+}

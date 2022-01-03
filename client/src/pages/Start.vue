@@ -1,7 +1,5 @@
 <template>
   <q-page class="flex full-width column justify-center items-center">
-    <!-- TEMPORARY BUTTON TO SHOW HOW TO CALL RUST FUNCTIONS FROM VUE -->
-    <q-btn push color="secondary" label="Test" @click="test" />
 
     <img id="logo" alt="OpenLink logo" src="../assets/logo.svg">
 
