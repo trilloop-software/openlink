@@ -26,7 +26,7 @@ export enum DeviceStatus {
 
 export class DeviceFields {
   field_name: string = ''
-  field_value: string | number = ''
+  field_value: string = ''
 }
 // ***
 
@@ -35,7 +35,7 @@ export interface Device {
   id: string
   name: string
   device_type: DeviceType
-  icon: string
+  icon: DeviceTypeIcon
   ip_address: IPv4
   port: Uint16Array
   connection_status: ConnectionStatus

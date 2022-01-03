@@ -14,14 +14,6 @@ pub struct Device {
 }
 
 #[tauri::command]
-pub fn get_device_list() -> String{
-
-    //return a string for now
-    //parsing the list of devices into a packet is for sprint 2
-    return "Device List on Backend: Placeholder Battery, Placeholder Inverter".to_string()
-}
-
-#[tauri::command]
 pub fn ping_device(name:&str) -> String{
 
     let mut owned_string: String = "Ping Request received for ".to_owned();

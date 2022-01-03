@@ -123,7 +123,7 @@ export default {
 <style lang="sass" scoped>
 .device-card
   width: 100%
-  max-width: 470px
+  max-width: 460px
 
 .error
   color: 'red'

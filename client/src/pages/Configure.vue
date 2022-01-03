@@ -20,7 +20,7 @@
 
     <q-separator />
 
-    <div class="q-pa-md row items-start q-gutter-md">
+    <div class="q-pa-md row justify-between q-gutter-md">
       <device-interface v-for="device in deviceList" 
         :device="device"
         :key="device.name"
@@ -45,11 +45,12 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import DeviceInterface from '@/components/DeviceInterface.vue'
 import DeviceEdit from '@/components/DeviceEdit.vue'
 import DeviceAdd from '@/components/DeviceAdd.vue'
-import { Device, Battery, Inverter, Sensor } from '@/libs/device'
+import { Device } from '@/libs/device'
+import { getDeviceList } from '@/services/api'
 
 export default {
   name: 'Configure',
@@ -59,17 +60,23 @@ export default {
     DeviceAdd,
   },
   setup: () => {
-    const deviceList: Array<Device> = [new Battery, new Inverter, new Sensor]
+    // pull device list from rust frontend
+    // TODO: implement call to backend from rust frontend
+    const deviceList: Ref<Device[]> = ref([])
+    getDeviceList(deviceList)
+    
     const newDevice = ref(false)
     const showDialog = ref(false)
     const showAddDialog = ref(false)
     const selectedDevice = ref<Device | null>(null)
 
+    // show the add device dialog window
     function addDeviceDialog() {
       newDevice.value = true
       showAddDialog.value = true
     }
 
+    // show the configure device dialog window
     function configureDeviceDialog(dev: Device, newDev: boolean) {
       selectedDevice.value = dev
       newDevice.value = newDev ? true : false
@@ -78,19 +85,19 @@ export default {
     
     // TODO: implement in rust frontend + backend
     function addDeviceToPod(dev: Device) {
-      deviceList.push(dev)
+      deviceList.value.push(dev)
       showDialog.value = false
     }
 
     // TODO: implement in rust frontend + backend
     function modifyPodDevice(dev: Device) {
-      deviceList[deviceList.findIndex(el => el.id === dev.id)] = dev
+      deviceList[deviceList.value.findIndex(el => el.id === dev.id)] = dev
       showDialog.value = false
     }
 
     // TODO: implement in rust frontend + backend
     function removeDeviceFromPod(dev: Device) {
-      deviceList.splice(deviceList.findIndex(el => el.id === dev.id), 1)
+      deviceList.value.splice(deviceList.value.findIndex(el => el.id === dev.id), 1)
       showDialog.value = false
     }
 

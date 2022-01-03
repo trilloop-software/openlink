@@ -4,9 +4,11 @@
 )]
 mod cmd;
 use cmd::{test};
-use cmd::{get_device_list};
 use cmd::{ping_device};
 use cmd::{add_device};
+
+mod api_svc;
+use api_svc::{get_device_list};
 
 fn main() {
   tauri::Builder::default()
