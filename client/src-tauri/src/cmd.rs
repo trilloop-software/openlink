@@ -5,6 +5,16 @@ use tauri::{command};
 pub fn test() -> String {
     "Message passing works!".to_string()
 }
+#[command]
+pub fn stop() -> String //in the future, we will want to actually send a message to the backend here.
+{
+    "Stop command sent".to_string()
+}
+#[command]
+pub fn emergency_stop() -> String //same as above.
+{
+    "Emergency stop command sent".to_string()
+}
 
 use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize)]
