@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDialog" persistent>
+  <q-dialog v-model="showDialog" persistent class="disable-select">
     <q-card>
       <q-bar>
         <q-item-label class="text-weight-bold">{{ newDevice ? 'Add Device' : 'Modify Device' }}</q-item-label>
@@ -7,71 +7,67 @@
         <q-btn flat icon="close" v-close-popup />
       </q-bar>
 
-      <div class="fit row wrap justify-center">
-        <q-card-section class="column justify-center items-center">
-          <q-icon color="primary" :name="device.icon" size="4rem" />
-          <q-item-label caption>{{ device.device_type }}</q-item-label>
-        </q-card-section>
-        <q-card-section class="q-gutter-y-md">
-          <q-input
-            dense
-            filled
-            v-model="activeDevice.name"
-            label="Name"
-          />
-          <q-input
-            dense
-            filled
-            v-model="activeDevice.ip_address"
-            label="IP Address"
-          />
-          <q-input
-            dense
-            filled
-            v-model="activeDevice.port[0]"
-            label="Port"
-          />
-        </q-card-section>
-      </div>
-      <div>
-        <q-card-actions class="fit row justify-between">
-          <q-btn
-            color="red"
-            flat
-            dense
-            icon="delete"
-            label="REMOVE"
-            @click="removeDevice(activeDevice)"
-          />
+      <q-card-section class="column justify-center items-center">
+        <q-icon color="primary" :name="device.icon" size="4rem" />
+        <q-item-label caption>{{ device.device_type }}</q-item-label>
+      </q-card-section>
+      <q-card-section class="q-gutter-y-md">
+        <q-input
+          dense
+          filled
+          v-model="activeDevice.name"
+          label="Name"
+        />
+        <q-input
+          dense
+          filled
+          v-model="activeDevice.ip_address"
+          label="IP Address"
+        />
+        <q-input
+          dense
+          filled
+          v-model="activeDevice.port[0]"
+          label="Port"
+        />
+      </q-card-section>
+      <q-card-actions class="fit row justify-between">
+        <q-btn
+          color="red"
+          flat
+          dense
+          icon="delete"
+          label="REMOVE"
+          @click="removeDevice(activeDevice)"
+        />
 
-          <q-btn
-            color="primary"
-            flat
-            dense
-            icon="settings_ethernet"
-            label="PING"
-            @click="activeDevice.ping(activeDevice.name, activeDevice.ip_address, activeDevice.port)"
-          />
+        <q-btn
+          color="primary"
+          flat
+          dense
+          icon="settings_ethernet"
+          label="PING"
+          @click="activeDevice.ping(activeDevice.name, activeDevice.ip_address, activeDevice.port)"
+        />
 
-          <q-btn v-if="newDevice"
-            color="primary"
-            flat
-            dense
-            icon-right="add"
-            label="ADD"
-            @click="addDevice(activeDevice)"
-          />
+        <q-btn v-if="newDevice"
+          color="primary"
+          flat
+          dense
+          icon-right="add"
+          label="ADD"
+          @click="addDevice(activeDevice)"
+        />
 
-          <q-btn v-else
-            color="primary"
-            flat
-            dense
-            icon-right="arrow_upward"
-            label="UPDATE"
-            @click="modifyDevice(activeDevice)"
-          />
-        </q-card-actions>
-      </div>
+        <q-btn v-else
+          color="primary"
+          flat
+          dense
+          icon-right="arrow_upward"
+          label="UPDATE"
+          @click="modifyDevice(activeDevice)"
+        />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDialog" persistent>
+  <q-dialog v-model="showDialog" persistent class="disable-select">
     <q-card>
       <q-bar>
         <q-item-label class="text-weight-bold">Add Device</q-item-label>
