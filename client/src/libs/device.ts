@@ -3,9 +3,9 @@ import { IPv4 } from 'ip-num/IPNumber'
 
 // *** custom types to use as device properties
 export enum DeviceType {
-  Battery = 'BATTERY',
-  Inverter = 'INVERTER',
-  Sensor = 'SENSOR'
+  Battery = 'Battery',
+  Inverter = 'Inverter',
+  Sensor = 'Sensor'
 }
 
 export enum DeviceTypeIcon {
@@ -14,14 +14,18 @@ export enum DeviceTypeIcon {
   Sensor = 'speed'
 }
 
+export function getDeviceIcon(dev_type: DeviceType): string {
+  return DeviceTypeIcon[dev_type]
+}
+
 export enum ConnectionStatus {
-  Disconnected,
-  Connected
+  Disconnected = 'Disconnected',
+  Connected = 'Connected'
 }
 
 export enum DeviceStatus {
-  Unsafe,
-  Operational,
+  Unsafe = 'Unsafe',
+  Operational = 'Operational',
 }
 
 export class DeviceFields {
@@ -35,7 +39,6 @@ export interface IDevice {
   id: string
   name: string
   device_type: DeviceType
-  icon: DeviceTypeIcon
   ip_address: IPv4
   port: number
   connection_status: ConnectionStatus
@@ -48,7 +51,6 @@ export class Device {
   id: string = this.generateID()
   name: string = 'Device'
   device_type: DeviceType = DeviceType.Battery
-  icon: DeviceTypeIcon = DeviceTypeIcon.Battery
   ip_address: IPv4 = new IPv4('127.0.0.1')
   port: number = 0
   connection_status: ConnectionStatus = ConnectionStatus.Connected
@@ -59,7 +61,6 @@ export class Device {
     this.id = this.generateID()
     this.name = 'Device'
     this.device_type = DeviceType.Battery
-    this.icon = DeviceTypeIcon.Battery
     this.ip_address = new IPv4('127.0.0.1')
     this.port = 0
     this.connection_status = ConnectionStatus.Connected
@@ -71,7 +72,6 @@ export class Device {
     this.id = dev.id
     this.name = dev.name
     this.device_type = dev.device_type
-    this.icon = dev.icon
     this.ip_address = dev.ip_address
     this.port = dev.port
     this.connection_status = dev.connection_status
@@ -100,7 +100,6 @@ export class Battery extends Device implements IDevice {
   id = this.generateID()
   name = 'Battery 1'
   device_type = DeviceType.Battery
-  icon = DeviceTypeIcon.Battery
   ip_address = new IPv4('127.0.0.1')
   port = 0
   connection_status = ConnectionStatus.Connected
@@ -114,7 +113,6 @@ export class Inverter extends Device implements IDevice {
   id = this.generateID()
   name = 'Inverter 1'
   device_type = DeviceType.Inverter
-  icon = DeviceTypeIcon.Inverter
   ip_address = new IPv4('127.0.0.1')
   port = 0
   connection_status = ConnectionStatus.Connected
@@ -128,7 +126,6 @@ export class Sensor extends Device implements IDevice {
   id = this.generateID()
   name = 'Sensor 1'
   device_type = DeviceType.Sensor
-  icon = DeviceTypeIcon.Sensor
   ip_address = new IPv4('127.0.0.1')
   port = 0
   connection_status = ConnectionStatus.Disconnected

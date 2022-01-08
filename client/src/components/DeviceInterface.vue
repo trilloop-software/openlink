@@ -2,18 +2,18 @@
   <q-card class="device-card" flat bordered>
     <q-item>
       <q-card-section avatar>
-        <q-icon color="primary" :name="device.icon" size="lg" />
+        <q-icon color="primary" :name="getDeviceIcon(device.device_type)" size="lg" />
       </q-card-section>
 
       <q-card-section>
         <q-item-label>{{ device.name }}</q-item-label>
-        <q-item-label caption>{{ device.device_type }}</q-item-label>
+        <q-item-label caption class="text-uppercase">{{ device.device_type }}</q-item-label>
       </q-card-section>
 
       <q-space />
 
       <q-card-actions>
-        <q-btn v-if="device.connection_status && device.device_status" 
+        <q-btn v-if="device.connection_status == 'Connected' && device.device_status == 'Operational'" 
           color="green"
           round
           flat
@@ -35,8 +35,8 @@
           @click="deviceDiagnostics(device)"
         >
           <q-tooltip>
-            Device is {{ device.connection_status ? 'connected' : 'disconnected' }} and
-            {{ device.device_status ? 'operational' : 'unsafe' }}
+            Device is <span class="text-lowercase">{{ device.connection_status }}</span> and
+            <span class="text-lowercase">{{ device.device_status }}</span>
           </q-tooltip>
         </q-btn>
 
@@ -73,12 +73,12 @@
 
             <q-item>
               <q-item-section class="text-weight-bold">Connection Status</q-item-section>
-              <q-item-section>{{ device.connection_status ? 'Connected' : 'Disconnected' }}</q-item-section>
+              <q-item-section>{{ device.connection_status }}</q-item-section>
             </q-item>
 
             <q-item>
               <q-item-section class="text-weight-bold">Device Status</q-item-section>
-              <q-item-section>{{ device.device_status ? 'Operational' : 'Unsafe' }}</q-item-section>
+              <q-item-section>{{ device.device_status }}</q-item-section>
             </q-item>
 
             <q-item v-for="f in device.fields" :key="f.field_name">
@@ -94,12 +94,12 @@
 
 <script lang="ts">
 import { ref, PropType } from 'vue'
-import { Device } from '@/libs/device'
+import { Device, getDeviceIcon } from '@/libs/device'
 
 export default {
   name: 'DeviceInterface',
   props: {
-    device: { type: Object as PropType<Device> }
+    device: { type: Object as PropType<Device>, default: new Device }
   },
   emits: ['configure-device', 'device-diagnostics'],
   setup: (props: any, { emit }) => {
@@ -115,6 +115,7 @@ export default {
       expanded: ref(false),
       deviceConfigure,
       deviceDiagnostics,
+      getDeviceIcon
     }
   }
 }

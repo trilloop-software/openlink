@@ -8,8 +8,8 @@
       </q-bar>
 
       <q-card-section class="column justify-center items-center">
-        <q-icon color="primary" :name="activeDevice.icon" size="4rem" />
-        <q-item-label caption>{{ activeDevice.device_type }}</q-item-label>
+        <q-icon color="primary" :name="getDeviceIcon(activeDevice.device_type)" size="4rem" />
+        <q-item-label caption class="text-uppercase">{{ activeDevice.device_type }}</q-item-label>
       </q-card-section>
       <q-card-section class="q-gutter-y-md">
         <q-input
@@ -74,7 +74,7 @@
 
 <script lang="ts">
 import { PropType } from 'vue'
-import { Device, DeviceTypeIcon } from '@/libs/device'
+import { Device, getDeviceIcon } from '@/libs/device'
 import { useModelWrapper } from '@/utils/modelWrapper'
 
 export default {
@@ -101,7 +101,7 @@ export default {
     }
 
     return {
-      DeviceTypeIcon,
+      getDeviceIcon,
       addDevice,
       modifyDevice,
       removeDevice,
