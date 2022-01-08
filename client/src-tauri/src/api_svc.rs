@@ -1,9 +1,19 @@
 use tauri::{command};
-use std::fs; // TEMPORARY TO READ FROM JSON FILE
+
+use super::{packet::*, remote_conn_svc::*};
 
 #[command]
-pub fn get_device_list() -> String {
-    let data = fs::read_to_string("src/temp_data/device_list.json").expect("Unable to get device list.");
+pub async fn get_device_list() -> String {
+    let pkt = Packet {
+        packet_id: "OPENLINK".to_string(),
+        version: 1,
+        cmd_type: 10,
+        timestamp: std::time::SystemTime::now(),
+        payload: vec!["test".to_string()]
+    };
 
-    data
+    let data = send("127.0.0.1:6007".parse().unwrap(), pkt).await;
+    let data = data.unwrap();
+
+    data.payload[0].clone()
 }

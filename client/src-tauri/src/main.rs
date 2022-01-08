@@ -8,7 +8,11 @@ use cmd::{test, ping_device, add_device, stop, emergency_stop, launch, set_desti
 mod api_svc;
 use api_svc::{get_device_list};
 
-fn main() {
+mod packet;
+mod remote_conn_svc;
+
+#[tokio::main]
+async fn main() {
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
       test,
