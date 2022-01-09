@@ -50,7 +50,7 @@ import DeviceInterface from '@/components/DeviceInterface.vue'
 import DeviceEdit from '@/components/DeviceEdit.vue'
 import DeviceAdd from '@/components/DeviceAdd.vue'
 import { Device } from '@/libs/device'
-import { getDeviceList } from '@/services/api'
+import { addDevice, getDeviceList, removeDevice, updateDevice } from '@/services/api'
 
 export default {
   name: 'Configure',
@@ -83,26 +83,26 @@ export default {
       showDialog.value = true
     }
     
-    // TODO: implement in rust frontend + backend
     function addDeviceToPod(dev: Device) {
       const tempDev = new Device
       tempDev.clone(dev)
+      addDevice(tempDev)
       deviceList.value.push(tempDev)
       showDialog.value = false
       selectedDevice.value.clear()
     }
 
-    // TODO: implement in rust frontend + backend
     function modifyPodDevice(dev: Device) {
       const tempDev = new Device
       tempDev.clone(dev)
+      updateDevice(tempDev)
       deviceList.value[deviceList.value.findIndex(el => el.id == dev.id)] = tempDev
       showDialog.value = false
       selectedDevice.value.clear()
     }
 
-    // TODO: implement in rust frontend + backend
     function removeDeviceFromPod(dev: Device) {
+      removeDevice(dev)
       deviceList.value.splice(deviceList.value.findIndex(el => el.id == dev.id), 1)
       showDialog.value = false
       selectedDevice.value.clear()

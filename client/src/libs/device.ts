@@ -39,7 +39,7 @@ export interface IDevice {
   id: string
   name: string
   device_type: DeviceType
-  ip_address: IPv4
+  ip_address: string
   port: number
   connection_status: ConnectionStatus
   device_status: DeviceStatus
@@ -51,7 +51,7 @@ export class Device {
   id: string = this.generateID()
   name: string = 'Device'
   device_type: DeviceType = DeviceType.Battery
-  ip_address: IPv4 = new IPv4('127.0.0.1')
+  ip_address: string = '127.0.0.1'
   port: number = 0
   connection_status: ConnectionStatus = ConnectionStatus.Connected
   device_status: DeviceStatus = DeviceStatus.Operational
@@ -61,7 +61,7 @@ export class Device {
     this.id = this.generateID()
     this.name = 'Device'
     this.device_type = DeviceType.Battery
-    this.ip_address = new IPv4('127.0.0.1')
+    this.ip_address = '127.0.0.1'
     this.port = 0
     this.connection_status = ConnectionStatus.Connected
     this.device_status = DeviceStatus.Operational
@@ -100,7 +100,7 @@ export class Battery extends Device implements IDevice {
   id = this.generateID()
   name = 'Battery 1'
   device_type = DeviceType.Battery
-  ip_address = new IPv4('127.0.0.1')
+  ip_address = '127.0.0.1'
   port = 0
   connection_status = ConnectionStatus.Connected
   device_status = DeviceStatus.Operational
@@ -113,7 +113,7 @@ export class Inverter extends Device implements IDevice {
   id = this.generateID()
   name = 'Inverter 1'
   device_type = DeviceType.Inverter
-  ip_address = new IPv4('127.0.0.1')
+  ip_address = '127.0.0.1'
   port = 0
   connection_status = ConnectionStatus.Connected
   device_status = DeviceStatus.Unsafe
@@ -126,7 +126,7 @@ export class Sensor extends Device implements IDevice {
   id = this.generateID()
   name = 'Sensor 1'
   device_type = DeviceType.Sensor
-  ip_address = new IPv4('127.0.0.1')
+  ip_address = '127.0.0.1'
   port = 0
   connection_status = ConnectionStatus.Disconnected
   device_status = DeviceStatus.Unsafe

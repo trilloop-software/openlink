@@ -27,12 +27,13 @@
         <q-input
           dense
           filled
-          v-model="activeDevice.port"
+          v-model.number="activeDevice.port"
           label="Port"
+          :rules="[val => (val >= 0 && val <= 65535) || 'Invalid port range.']"
         />
       </q-card-section>
       <q-card-actions class="fit row justify-between">
-        <q-btn
+        <q-btn v-if="!newDevice"
           color="red"
           flat
           dense

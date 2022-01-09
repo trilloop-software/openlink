@@ -2,12 +2,16 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
+#[macro_use]
+mod macros;
+
 mod cmd;
-use cmd::{test, ping_device, add_device, stop, emergency_stop, launch, set_destination};
+use cmd::{test, ping_device, stop, emergency_stop, launch, set_destination};
 
 mod api_svc;
-use api_svc::{get_device_list};
+use api_svc::{add_device, get_device_list, remove_device, update_device};
 
+mod device;
 mod packet;
 mod remote_conn_svc;
 
@@ -16,9 +20,11 @@ async fn main() {
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
       test,
-      get_device_list,
-      ping_device,
       add_device,
+      get_device_list,
+      remove_device,
+      update_device,
+      ping_device,
       stop,
       emergency_stop,
       set_destination,

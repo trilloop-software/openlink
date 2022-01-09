@@ -1,4 +1,3 @@
-
 use tauri::{command};
 
 #[command]
@@ -16,14 +15,7 @@ pub fn emergency_stop() -> String //same as above.
     "Emergency stop command sent".to_string()
 }
 
-use serde::{Serialize, Deserialize};
-#[derive(Serialize, Deserialize)]
-pub struct Device {
-    pub name: String,
-    pub ip_address: String,
-}
-
-#[tauri::command]
+#[command]
 pub fn ping_device(name:&str) -> String{
 
     let mut owned_string: String = "Ping Request received for ".to_owned();
@@ -36,7 +28,7 @@ pub fn ping_device(name:&str) -> String{
     return owned_string;
 }
 
-#[tauri::command]
+/*#[tauri::command]
 pub fn add_device(device_type:&str) -> String{
 
     let mut owned_string: String = "Received request to add new device (".to_owned();
@@ -47,7 +39,7 @@ pub fn add_device(device_type:&str) -> String{
     //return a string for now
     //processing the packet is for sprint 2
     return owned_string;
-}
+}*/
 
 #[command]
 pub fn launch() -> String 
