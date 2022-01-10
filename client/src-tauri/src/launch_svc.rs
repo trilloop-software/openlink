@@ -13,6 +13,7 @@ pub async fn launch() -> String{
         payload: vec!["Launch command from Client".to_string()]
     };
 
+    println!("Data sent");
     let data = send_packet(my_packet).await;
 
     data.payload[0].clone()
