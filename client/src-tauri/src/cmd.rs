@@ -3,11 +3,6 @@ use tauri::{command};
 pub fn test() -> String {
     "Message passing works!".to_string()
 }
-#[command]
-pub fn emergency_stop() -> String 
-{
-    "Emergency stop command sent".to_string()
-}
 
 #[command]
 pub fn ping_device(name:&str) -> String{
