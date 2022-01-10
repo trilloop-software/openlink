@@ -1,6 +1,7 @@
 use tauri::{command};
 
 use super::{packet::*,remote_conn_svc::*};
+
 #[command]
 pub async fn launch() -> String{
     
@@ -10,12 +11,11 @@ pub async fn launch() -> String{
         cmd_type: 69,
         timestamp: std::time::SystemTime::now(),
         payload: vec!["Launch command from Client".to_string()]
-    }
-    //println! ("Data Sent");
+    };
 
     let data = send_packet(my_packet).await;
 
-    data.payload[0].clone();
+    data.payload[0].clone()
 }
 
 async fn send_packet(my_packet: Packet) -> Packet {
