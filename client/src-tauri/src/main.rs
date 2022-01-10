@@ -6,10 +6,13 @@
 mod macros;
 
 mod cmd;
-use cmd::{test, ping_device, stop, emergency_stop, launch, set_destination};
+use cmd::{test, ping_device, emergency_stop, launch, set_destination};
 
 mod api_svc;
 use api_svc::{add_device, get_device_list, remove_device, update_device};
+
+mod brake_svc;
+use brake_svc::{stop};
 
 mod device;
 mod packet;
