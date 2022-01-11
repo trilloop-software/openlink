@@ -3,8 +3,8 @@ use tauri::{command};
 use super::{packet::*,remote_conn_svc::*};
 
 #[command]
-pub async fn launch() -> String{
-    
+pub async fn launch(/*my_time: String*/) -> String{
+    //println!("{}" ,my_time);
     let my_packet = Packet {
         packet_id: s!["OPENLINK"],
         version: 1,

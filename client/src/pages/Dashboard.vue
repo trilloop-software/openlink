@@ -8,6 +8,7 @@
     </q-page-sticky>
 
     <div class="fit column items-center q-gutter-y-lg">
+      <q-input placeholder="Example: 100000"/>
       <q-btn class = "same-length" push color="primary" label="Set Course Destination" @click= "setDestination"/>
       <q-btn class = "same-length" push color="primary" label="Launch Pod" @click= "launch"/>
       <q-btn class = "same-length" push color="primary" label="Stop Pod" @click= "stop"/>
