@@ -4,6 +4,9 @@ use std::{sync::Arc, net::SocketAddr};
 
 use super::packet::*;
 
+/// Set up QUIC client and send request from Vue frontend on SendStream
+/// Receive response on RecvStream and decode into packet
+/// Return packet to Vue frontend
 pub async fn send(server_addr: SocketAddr, pkt: Packet) -> Result<Packet> {
     let client_cfg = configure_client();
 
@@ -43,6 +46,8 @@ pub async fn send(server_addr: SocketAddr, pkt: Packet) -> Result<Packet> {
     Ok(decode(resp))
 }
 
+/// Skipping server certificate verification to simplify development for now
+/// TODO: actually implement use of valid certs on server/client
 struct SkipServerVerification;
 
 impl SkipServerVerification {
@@ -65,6 +70,7 @@ impl rustls::client::ServerCertVerifier for SkipServerVerification {
     }
 }
 
+/// Configure client to ignore server certificate verification
 fn configure_client() -> ClientConfig {
     let crypto = rustls::ClientConfig::builder()
         .with_safe_defaults()
