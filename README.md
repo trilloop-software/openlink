@@ -23,7 +23,7 @@ cargo run
 - yarn
 
 ## How to install/run
-From the remote directory:
+From the client directory:
 
 ```
 yarn install
