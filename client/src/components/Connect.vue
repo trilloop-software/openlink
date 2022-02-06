@@ -5,24 +5,76 @@
 </template>
 
 <script lang="ts">
-//import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/tauri'
 import { ref } from 'vue'
 
 export default {
   name: 'Connect',
-  emits: ['connectionSuccess'],
-  setup: (props: any, context: any) => {
+  emits: ['connectionSuccess','connectionError','warning'],
+  setup: (props: any, { emit }) => {
     const ipaddr = ref("")
     const port = ref("")
 
     function connectToPod() {
-      context.emit('connectionSuccess')
+      if (!checkIp()) {
+        emit('warning', 'Please enter a valid IP')
+        return
+      }
+
+      if (!checkPort()) {
+        emit('warning', 'Please enter a valid port')
+        return
+      }
+
+      invoke("connect", { addr: `${ipaddr.value}:${port.value}` })
+        .then((response) => {
+          emit('connectionSuccess', response)
+        })
+        .catch((error) => {
+          emit('connectionError', error)
+        })
+    }
+
+    function checkIp() {
+      const numArray = ipaddr.value.split('.').map(Number)
+
+      if (numArray.length != 4) {
+        return false
+      } else {
+        if (numArray.every(x => isNaN(x))) {
+          return false
+        } else {
+          if (numArray.every(x => x >= 0 && x <= 255)) {
+            return true
+          } else {
+            return false
+          }
+        }
+      }
+    }
+
+    function checkPort() {
+      if (port.value == "") {
+        return false
+      }
+      
+      const num = Number(port.value)
+
+      if (isNaN(num)) {
+        return false
+      } else {
+        if (num > 65535 || num < 0) {
+          return false
+        } else {
+          return true
+        }
+      }
     }
 
     return {
       connectToPod,
       ipaddr,
-      port
+      port,
     }
   }
 }

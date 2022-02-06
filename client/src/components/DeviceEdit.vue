@@ -66,7 +66,7 @@
           dense
           icon-right="arrow_upward"
           label="UPDATE"
-          @click="modifyDevice(activeDevice)"
+          @click="updateDevice(activeDevice)"
         />
       </q-card-actions>
     </q-card>
@@ -85,30 +85,29 @@ export default {
     device: { type: Object as PropType<Device> },
     show: { type: Boolean, default: false }
   },
-  emits: ['update:show','update:device','update:new','add-device','modify-device','remove-device'],
+  emits: ['update:show','update:device','update:new','add-device','update-device','remove-device'],
   setup: (props: any, { emit }) => {
-    // emit new device to parent component to add/modify/remove to/from device list
-    // need to implement in backend / rust frontend
+    // emit new device to parent component to add/remove/update to/from device list
     function addDevice(dev: Device) {
       emit('add-device', dev)
-    }
-
-    function modifyDevice(dev: Device) {
-      emit('modify-device', dev)
     }
 
     function removeDevice(dev: Device) {
       emit('remove-device', dev)
     }
 
+    function updateDevice(dev: Device) {
+      emit('update-device', dev)
+    }
+
     return {
-      getDeviceIcon,
+      activeDevice: useModelWrapper(props, emit, 'device'),
       addDevice,
-      modifyDevice,
+      getDeviceIcon,
+      newDevice: useModelWrapper(props, emit, 'new'),
       removeDevice,
       showDialog: useModelWrapper(props, emit, 'show'),
-      newDevice: useModelWrapper(props, emit, 'new'),
-      activeDevice: useModelWrapper(props, emit, 'device'),
+      updateDevice,
     }
   }
 }

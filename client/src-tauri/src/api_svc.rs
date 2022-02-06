@@ -1,113 +1,93 @@
+use anyhow::Result;
 use serde_json;
-use tauri::{command};
+use tauri::{command, State};
 
 use super::{device::*, packet::*, remote_conn_svc::*};
 
-// -----------------
-// COMMAND FUNCTIONS
-// -----------------
 #[command]
-pub async fn add_device(dev: String) -> String {
-    // parse device received from vue frontend to ensure parameters are valid
+pub async fn add_device(dev: String, conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // lock tauri state and ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    // verify device has valid properties
     let dev: Device = match serde_json::from_str(&dev) {
-        Ok(s) => s,
-        Err(e) => return s![e]
+        Ok(d) => d,
+        Err(e) => return Err(s![e])
     };
 
-    // convert back to string for payload
     let dev = serde_json::to_string(&dev).unwrap();
 
-    // construct add_device packet with the device as payload
-    let pkt = Packet {
-        packet_id: s!["OPENLINK"],
-        version: 1,
-        cmd_type: 33,
-        timestamp: std::time::SystemTime::now(),
-        payload: vec![dev]
+    // send new device to pod computer
+    let data = match send_(&conn, Packet::new(33, vec![dev])).await {
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
     };
 
-    let data = send_packet(pkt).await;
-
-    // return result to vue frontend
-    data.payload[0].clone()
+    // send success response to frontend
+    Ok(data.payload[0].clone())
 }
 
 #[command]
-pub async fn get_device_list() -> String {
-    // construct the get_device_list packet with empty payload
-    let pkt = Packet {
-        packet_id: s!["OPENLINK"],
-        version: 1,
-        cmd_type: 32,
-        timestamp: std::time::SystemTime::now(),
-        payload: vec![s![""]]
+pub async fn get_device_list(conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    let data = match send_(&conn, Packet::new(32, vec![s![""]])).await {
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
     };
 
-    let data = send_packet(pkt).await;
-
     // return result to vue frontend
-    data.payload[0].clone()
+    Ok(data.payload[0].clone())
 }
 
+
 #[command]
-pub async fn remove_device(dev: String) -> String {
-    // parse device received from vue frontend to ensure parameters are valid
+pub async fn remove_device(dev: String, conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    // verify device has valid properties
     let dev: Device = match serde_json::from_str(&dev) {
-        Ok(s) => s,
-        Err(e) => return s![e]
+        Ok(d) => d,
+        Err(e) => return Err(s![e])
     };
 
-    // convert back to string for packet
     let dev = serde_json::to_string(&dev).unwrap();
 
-    // construct remove_device packet with the device as payload
-    let pkt = Packet {
-        packet_id: s!["OPENLINK"],
-        version: 1,
-        cmd_type: 35,
-        timestamp: std::time::SystemTime::now(),
-        payload: vec![dev]
+    // send device to remove from pod computer
+    let data = match send_(&conn, Packet::new(35, vec![dev])).await {
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
     };
 
-    let data = send_packet(pkt).await;
-
-    // return result to vue frontend
-    data.payload[0].clone()
+    // send success response to frontend
+    Ok(data.payload[0].clone())
 }
 
 #[command]
-pub async fn update_device(dev: String) -> String {
-    // parse device received from vue frontend to ensure parameters are valid
+pub async fn update_device(dev: String, conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    // verify device has valid properties
     let dev: Device = match serde_json::from_str(&dev) {
-        Ok(s) => s,
-        Err(e) => return s![e]
+        Ok(d) => d,
+        Err(e) => return Err(s![e])
     };
 
-    // convert back to string for packet
     let dev = serde_json::to_string(&dev).unwrap();
-    
-    // construct update_device packet with the device as payload
-    let pkt = Packet {
-        packet_id: s!["OPENLINK"],
-        version: 1,
-        cmd_type: 34,
-        timestamp: std::time::SystemTime::now(),
-        payload: vec![dev]
+
+    // send device to update on pod computer
+    let data = match send_(&conn, Packet::new(34, vec![dev])).await {
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
     };
 
-    let data = send_packet(pkt).await;
-
-    // return result to vue frontend
-    data.payload[0].clone()
-}
-
-// ----------------
-// HELPER FUNCTIONS
-// ----------------
-async fn send_packet(pkt: Packet) -> Packet {
-    // hardcoding server_addr temporarily
-    let data = send("127.0.0.1:6007".parse().unwrap(), pkt).await;
-    let data = data.unwrap();
-
-    data
+    // send success response to frontend
+    Ok(data.payload[0].clone())
 }
