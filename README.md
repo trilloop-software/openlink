@@ -1,4 +1,4 @@
-# ![openlink](./logo/openlink-full-path.svg)
+# ![openlink](./logo/openlink-full-path.svg#gh-light-mode-only)![openlink](./logo/openlink-full-path-dark.svg#gh-dark-mode-only)
 <p>OpenLink is an open-source control and telemetry software system for Western Engineering's Trillium Hyperloop.</p>
 
 <p>&nbsp;</p>
