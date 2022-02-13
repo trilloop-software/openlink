@@ -32,48 +32,77 @@
       v-model:new="newDevice"
       v-model:device="selectedDevice"
       v-model:show="showDialog"
-      @add-device="addDeviceToPod"
-      @modify-device="modifyPodDevice"
-      @remove-device="removeDeviceFromPod"
+      @add-device="addDevice"
+      @remove-device="removeDevice"
+      @update-device="updateDevice"
     />
 
     <device-add
       v-model:show="showAddDialog"
       @new-device="configureDeviceDialog"
     />
+
+    <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg"/>
   </q-page>
 </template>
 
 <script lang="ts">
 import { ref, Ref } from 'vue'
-import DeviceInterface from '@/components/DeviceInterface.vue'
-import DeviceEdit from '@/components/DeviceEdit.vue'
+import { invoke } from '@tauri-apps/api/tauri'
+
 import DeviceAdd from '@/components/DeviceAdd.vue'
+import DeviceEdit from '@/components/DeviceEdit.vue'
+import DeviceInterface from '@/components/DeviceInterface.vue'
+import Notification from '@/components/Notification.vue'
 import { Device } from '@/libs/device'
-import { addDevice, getDeviceList, removeDevice, updateDevice } from '@/services/api'
+//import { /*addDevice, getDeviceList, removeDevice, updateDevice*/ } from '@/services/api'
 
 export default {
   name: 'Configure',
   components: {
-    DeviceInterface,
-    DeviceEdit,
     DeviceAdd,
+    DeviceEdit,
+    DeviceInterface,
+    Notification,
   },
   setup: () => {
-    // pull device list from rust frontend
-    // TODO: implement call to backend from rust frontend
     const deviceList: Ref<Device[]> = ref([])
-    getDeviceList(deviceList)
-    
     const newDevice = ref(false)
+    const notifyShow = ref(false)
+    const notifyKind = ref('positive')
+    const notifyMsg = ref('')
     const showDialog = ref(false)
     const showAddDialog = ref(false)
     const selectedDevice = ref(new Device)
+
+    // pull device list from rust frontend
+    getDeviceList()
 
     // show the add device dialog window
     function addDeviceDialog() {
       newDevice.value = true
       showAddDialog.value = true
+    }
+    
+    function addDevice(dev: Device) {
+      const tempDev = new Device
+      tempDev.clone(dev)
+
+      invoke("add_device", { dev: JSON.stringify(tempDev) })
+        .then((response) => {
+          deviceList.value.push(tempDev)
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+      
+      showDialog.value = false
+      selectedDevice.value.clear()
     }
 
     // show the configure device dialog window
@@ -82,43 +111,72 @@ export default {
       newDevice.value = newDev ? true : false
       showDialog.value = true
     }
-    
-    function addDeviceToPod(dev: Device) {
-      const tempDev = new Device
-      tempDev.clone(dev)
-      addDevice(tempDev)
-      deviceList.value.push(tempDev)
+
+    function getDeviceList() {
+      invoke("get_device_list")
+        .then((response) => {
+          deviceList.value = JSON.parse(response as string)
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+    }
+
+    function removeDevice(dev: Device) {
+      invoke("remove_device", { dev: JSON.stringify(dev) })
+        .then((response) => {
+          deviceList.value.splice(deviceList.value.findIndex(el => el.id == dev.id), 1)
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
       showDialog.value = false
       selectedDevice.value.clear()
     }
 
-    function modifyPodDevice(dev: Device) {
+    function updateDevice(dev: Device) {
       const tempDev = new Device
       tempDev.clone(dev)
-      updateDevice(tempDev)
-      deviceList.value[deviceList.value.findIndex(el => el.id == dev.id)] = tempDev
-      showDialog.value = false
-      selectedDevice.value.clear()
-    }
 
-    function removeDeviceFromPod(dev: Device) {
-      removeDevice(dev)
-      deviceList.value.splice(deviceList.value.findIndex(el => el.id == dev.id), 1)
+      invoke("update_device", { dev: JSON.stringify(tempDev) })
+        .then((response) => {
+          deviceList.value[deviceList.value.findIndex(el => el.id == tempDev.id)] = tempDev
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+      
       showDialog.value = false
       selectedDevice.value.clear()
     }
 
     return {
+      addDeviceDialog,
+      addDevice,
+      configureDeviceDialog,
       deviceList,
       newDevice,
-      addDeviceDialog,
+      notifyShow,
+      notifyKind,
+      notifyMsg,
+      removeDevice,
+      selectedDevice,
       showDialog,
       showAddDialog,
-      selectedDevice,
-      configureDeviceDialog,
-      addDeviceToPod,
-      modifyPodDevice,
-      removeDeviceFromPod,
+      updateDevice,
     }
   }
 }

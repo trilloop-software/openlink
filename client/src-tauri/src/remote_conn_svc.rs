@@ -1,9 +1,77 @@
 use anyhow::{anyhow, Result};
 use quinn::{ClientConfig, Endpoint};
 use std::{sync::Arc, net::SocketAddr};
+use tauri::State;
 
 use super::packet::*;
 
+/// establishes persistent QUIC connection to pod computer and stores in a tauri state if successful
+/// returns a boolean to the frontend representing connection state
+/// match statements are used to adequately handle errors rather than crashing the tauri thread
+#[tauri::command]
+pub async fn connect(addr: String, conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    let server_addr = addr.parse().unwrap();
+
+    let client_cfg = configure_client();
+    let endpoint = Endpoint::client("0.0.0.0:0".parse().unwrap());
+    let mut endpoint = match endpoint {
+        Ok(endpoint) => endpoint,
+        Err(_) => return Err(s!["Failed to bind local network interface"])
+    };
+
+    endpoint.set_default_client_config(client_cfg);
+
+    let new_conn = endpoint
+        .connect(server_addr, "localhost");
+
+    let new_conn = match new_conn {
+        Ok(new_conn) => new_conn,
+        Err(_) => return Err(s!["Failed to start connection to Pod Computer"])
+    };
+
+    let new_conn = match new_conn.await {
+        Ok(new_conn) => new_conn,
+        Err(_) => return Err(s!["Failed to open connection to Pod Computer"])
+    };
+
+    let quinn::NewConnection { connection: conn, .. } = new_conn;
+
+    *conn_state.0.lock().await = Some(conn);
+
+    Ok(s!["Connected"])
+}
+
+/// !!! RENAME TO 'send' once refactor complete !!!
+/// utilizes QUIC connection to send and receive packets from the pod computer
+/// returns a result packet with either a valid payload or an error
+/// match statements are used to adequately handle errors rather than crashing the tauri thread
+pub async fn send_(conn: &quinn::Connection, pkt: Packet) -> Result<Packet, String> {
+    let (mut send, recv) = match conn.open_bi().await {
+        Ok((send, recv)) => (send, recv),
+        Err(_) => return Err(s!["Failed to open send and receive streams"])
+    };
+
+    let req = encode(pkt);
+    
+    match send.write_all(&req).await {
+        Ok(()) => (),
+        Err(_) => return Err(s!["Failed to send request"])
+    };
+    
+    match send.finish().await {
+        Ok(()) => (),
+        Err(_) => return Err(s!["Failed to shutdown stream"])
+    };
+
+    let resp = match recv.read_to_end(usize::max_value()).await {
+        Ok(resp) => resp,
+        Err(_) => return Err(s!["Failed to read response"])
+    };
+
+    Ok(decode(resp))
+}
+
+/// !!! DELETE ONCE REFACTOR COMPLETE !!!
 /// Set up QUIC client and send request from Vue frontend on SendStream
 /// Receive response on RecvStream and decode into packet
 /// Return packet to Vue frontend

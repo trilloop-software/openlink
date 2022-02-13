@@ -24,9 +24,13 @@ mod device;
 mod packet;
 mod remote_conn_svc;
 
+#[derive(Default)]
+pub struct Connection(tauri::async_runtime::Mutex<Option<quinn::Connection>>);
+
 #[tokio::main]
 async fn main() {
   tauri::Builder::default()
+    .manage(Connection(Default::default()))
     .invoke_handler(tauri::generate_handler![
       test,
       add_device,
@@ -37,7 +41,8 @@ async fn main() {
       stop,
       emergency_stop,
       set_destination,
-      launch
+      launch,
+      remote_conn_svc::connect,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
