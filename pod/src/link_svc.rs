@@ -14,9 +14,6 @@ impl LinkSvc {
     /// Main service task for link service
     pub async fn run(mut self) -> Result<()> {
         println!("link_svc: service running");
-
-        self.add_device("Device 45".to_string());
-
         //self.populate_temp_data();
 
         while let Some(mut pkt) = self.rx.recv().await {
@@ -47,15 +44,14 @@ impl LinkSvc {
     /// Add new device to device list
     /// Return success message to client
     fn add_device(&mut self, req: String) -> Result<String, serde_json::Error> {
+
         println!("link_svc: add_device command received");
         let dev: Device = serde_json::from_str(&req)?;
 
-        //add the new Device instance to device_list
         self.device_list.push(dev);
         println!("link_svc: device added");
 
-        //retrieve and record the DeviceFields of the new Device instance
-        self.device_discovery(self.device_list.len());
+        self.device_discovery(self.device_list.len()-1);
 
         Ok(s!["Device added"])
     }
@@ -63,6 +59,12 @@ impl LinkSvc {
     fn get_device_list(&self) -> Result<String, serde_json::Error> {
         println!("get_device_list command received");
         serde_json::to_string(&self.device_list)
+
+    }
+
+    fn device_discovery(&self, index:usize){
+        println!("Sending discovery packet to: {}",self.device_list[index].name.to_string());
+        
     }
 
     /// Find device received from client in device list and remove from vector
@@ -87,21 +89,6 @@ impl LinkSvc {
         println!("link_svc: device updated");
 
         Ok(s!["Device updated"])
-    }
-
-    /// Send discovery packets to user-defined IPs
-    /// Return packets should contain device fields, which need to be extracted
-    fn device_discovery(&mut self, index:usize) {
-        
-        println!("doing discovery for device {}",self.device_list[index].name);
-
-        // get its IP address and send a discovery packet to that address
-        // 
-        // handle each return packet
-        // by extracting the data from packet payload
-        // and putting the data in the Device instance
-
-
     }
 
     /// Temporary function to populate the device list
@@ -144,11 +131,5 @@ impl LinkSvc {
             device_status: DeviceStatus::Unsafe,
             fields: vec![] 
         });
-
-        
-    }//end of populate_temp_data
-
-    
+    }
 }
-
-
