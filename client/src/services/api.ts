@@ -3,6 +3,16 @@ import { Ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { Device } from '@/libs/device'
 
+export function lockDevices(deviceList: Ref<Device[]>) {
+  invoke("lock_devices")
+    .then((response) => {
+      deviceList.value = JSON.parse(response as string)
+    })
+    .catch((error) => {
+      alert('Error:' + error)
+    })
+}
+
 export function addDevice(device: Device) {  
   invoke("add_device", { dev: JSON.stringify(device) })
     .then((response) => {

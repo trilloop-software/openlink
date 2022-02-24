@@ -5,6 +5,21 @@ use tauri::{command, State};
 use super::{device::*, packet::*, remote_conn_svc::*};
 
 #[command]
+pub async fn lock_devices(conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    let data = match send_(&conn, Packet::new(63, vec![s![""]])).await {
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
+    };
+
+    // return result to vue frontend
+    Ok(data.payload[0].clone())
+}
+
+#[command]
 pub async fn add_device(dev: String, conn_state: State<'_, super::Connection>) -> Result<String, String> {
     // lock tauri state and ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;

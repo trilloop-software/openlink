@@ -6,6 +6,13 @@
         <q-toolbar-title>Configure</q-toolbar-title>
       </q-toolbar>
     </q-page-sticky>
+    <q-btn
+      class="bg-red text-white"
+      flat
+      dense
+      label="LOCK DEVICES"
+      @click="lockDevices"
+    />
 
     <div class="fit row justify-end">
       <q-btn
@@ -77,6 +84,18 @@ export default {
 
     // pull device list from rust frontend
     getDeviceList()
+
+    function lockDevices() {
+      invoke("lock_devices")
+        .then((response) => {
+          deviceList.value = JSON.parse(response as string)
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+    }
 
     // show the add device dialog window
     function addDeviceDialog() {
@@ -164,6 +183,7 @@ export default {
     }
 
     return {
+      lockDevices,
       addDeviceDialog,
       addDevice,
       configureDeviceDialog,

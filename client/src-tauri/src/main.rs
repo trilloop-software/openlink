@@ -9,7 +9,7 @@ mod cmd;
 use cmd::{test, ping_device, set_destination};
 
 mod api_svc;
-use api_svc::{add_device, get_device_list, remove_device, update_device};
+use api_svc::{lock_devices, add_device, get_device_list, remove_device, update_device};
 
 mod brake_svc;
 use brake_svc::{stop};
@@ -33,6 +33,7 @@ async fn main() {
     .manage(Connection(Default::default()))
     .invoke_handler(tauri::generate_handler![
       test,
+      lock_devices,
       add_device,
       get_device_list,
       remove_device,
