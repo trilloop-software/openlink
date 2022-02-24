@@ -8,7 +8,7 @@ pub async fn stop() -> String{
         version: 1,
         cmd_type: 99,
         timestamp: std::time::SystemTime::now(),
-        payload: vec!["Rip and tear, until it is done".to_string()] //a stop command may have more parameters in the future, but right now it doesn't really need a payload
+        payload: vec![1.to_string()]
     };
     println!("Data sent");
     let data = send_packet(pkt).await;
