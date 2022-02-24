@@ -62,9 +62,15 @@ impl LinkSvc {
 
     }
 
+    /// Hand off to pod_conn_svc in order to retrieve device fields for a given device
+    /// 
     fn device_discovery(&self, index:usize){
         println!("Sending discovery packet to: {}",self.device_list[index].name.to_string());
-        
+        //handoff to pod_conn_svc. 
+
+        //handoff from pod_conn_svc
+
+        //extract the returned data and populate the appropriate Device instance
     }
 
     /// Find device received from client in device list and remove from vector

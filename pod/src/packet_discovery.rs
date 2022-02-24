@@ -3,7 +3,7 @@ use std::time::SystemTime;
 use bincode::{serialize, deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Packet_Discovery {
+pub struct PacketDiscovery {
     pub packet_id: String,
     pub version: u8,
     pub cmd_type: u8,
@@ -11,7 +11,7 @@ pub struct Packet_Discovery {
     pub payload: Vec<String>
 }
 
-impl Packet_Discovery {
+impl PacketDiscovery {
     pub fn new(cmd_type: u8, payload: Vec<String>) -> Self {
         Self {
             packet_id: s!["OPENLINK"],
@@ -23,10 +23,10 @@ impl Packet_Discovery {
     }
 }
 
-pub fn decode(pkt: Vec<u8>) -> Packet_Discovery {
+pub fn decode(pkt: Vec<u8>) -> PacketDiscovery {
     deserialize(&pkt[..]).unwrap()
 }
 
-pub fn encode(pkt: Packet_Discovery) -> Vec<u8> {
+pub fn encode(pkt: PacketDiscovery) -> Vec<u8> {
     serialize(&pkt).unwrap()
 }
