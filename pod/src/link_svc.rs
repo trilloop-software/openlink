@@ -14,7 +14,6 @@ impl LinkSvc {
     /// Main service task for link service
     pub async fn run(mut self) -> Result<()> {
         println!("link_svc: service running");
-        //self.populate_temp_data();
 
         while let Some(mut pkt) = self.rx.recv().await {
             // process response based on cmd_type variable
@@ -23,6 +22,7 @@ impl LinkSvc {
                 33 => self.add_device(pkt.payload[0].clone()).unwrap(),
                 34 => self.update_device(pkt.payload[0].clone()).unwrap(),
                 35 => self.remove_device(pkt.payload[0].clone()).unwrap(),
+                //36 => self.system_check().unwrap(),
                 _ => s!["Command not implemented"]
             };
 
@@ -51,6 +51,8 @@ impl LinkSvc {
         self.device_list.push(dev);
         println!("link_svc: device added");
 
+        //obtain the device's fields
+        //via pod_conn_svc. (this will also reflect the new device on pod_conn_svc)
         self.device_discovery(self.device_list.len()-1);
 
         Ok(s!["Device added"])
@@ -63,14 +65,13 @@ impl LinkSvc {
     }
 
     /// Hand off to pod_conn_svc in order to retrieve device fields for a given device
-    /// 
     fn device_discovery(&self, index:usize){
         println!("Sending discovery packet to: {}",self.device_list[index].name.to_string());
         //handoff to pod_conn_svc. 
 
         //handoff from pod_conn_svc
-
         //extract the returned data and populate the appropriate Device instance
+        //pod_conn_svc.cmd(index_for_discovery_cmd).unwrap()
     }
 
     /// Find device received from client in device list and remove from vector
@@ -97,7 +98,15 @@ impl LinkSvc {
         Ok(s!["Device updated"])
     }
 
-    /// Temporary function to populate the device list
+    //Handoff from launch_svc
+    //handles query for systems check
+    //Handoff to pod_conn_svc
+    //return the result of the system check to launch_svc
+    fn system_check(&mut self){
+
+    }
+
+    /// Temporary function to populate the device list with hard-coded data
     fn populate_temp_data(&mut self) {
         self.device_list.push(Device { 
             id: s!("yhvlwn1"),
