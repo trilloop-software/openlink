@@ -32,6 +32,11 @@ export class DeviceFields {
   field_name: string = ''
   field_value: string = ''
 }
+
+export class DeviceCommands {
+  cmd_name: string = ''
+  cmd_value: number = 0
+}
 // ***
 
 // common device properties
@@ -44,6 +49,7 @@ export interface IDevice {
   connection_status: ConnectionStatus
   device_status: DeviceStatus
   fields: Array<DeviceFields>
+  commands: Array<DeviceCommands>
 }
 
 // common device functions to manipulate device properties
@@ -56,6 +62,7 @@ export class Device {
   connection_status: ConnectionStatus = ConnectionStatus.Connected
   device_status: DeviceStatus = DeviceStatus.Operational
   fields: Array<DeviceFields> = Array<DeviceFields>(0)
+  commands: Array<DeviceCommands> = Array<DeviceCommands>(0)
 
   clear() {
     this.id = this.generateID()
@@ -66,6 +73,7 @@ export class Device {
     this.connection_status = ConnectionStatus.Connected
     this.device_status = DeviceStatus.Operational
     this.fields = Array<DeviceFields>(0)
+    this.commands= Array<DeviceCommands>(0)
   }
 
   clone(dev: Device) {
@@ -77,6 +85,7 @@ export class Device {
     this.connection_status = dev.connection_status
     this.device_status = dev.device_status
     this.fields = JSON.parse(JSON.stringify(dev.fields)) as DeviceFields[]
+    this.commands = JSON.parse(JSON.stringify(dev.commands)) as DeviceCommands[]
   }
 
   generateID() { // TEMPORARY FUNCTION, MOVE TO RUST FRONTEND EVENTUALLY
@@ -106,6 +115,7 @@ export class Battery extends Device implements IDevice {
   device_status = DeviceStatus.Operational
   fields = [{ field_name: 'Temperature', field_value: '' },
             { field_name: 'Power', field_value: '' }]
+  commands = []
 }
 
 // inverter specific properties/functions
@@ -119,6 +129,7 @@ export class Inverter extends Device implements IDevice {
   device_status = DeviceStatus.Unsafe
   fields = [{ field_name: 'Inverter Field 1', field_value: '' },
             { field_name: 'Inverter Field 2', field_value: '' }]
+  commands = []
 }
 
 // sensor specific properties/functions
@@ -131,5 +142,6 @@ export class Sensor extends Device implements IDevice {
   connection_status = ConnectionStatus.Disconnected
   device_status = DeviceStatus.Unsafe
   fields = []
+  commands = []
 }
 // ***

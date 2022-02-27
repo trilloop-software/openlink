@@ -95,6 +95,8 @@ export default {
           notifyKind.value = 'negative'
           notifyMsg.value = error as string
         })
+
+      window.location.reload()
     }
 
     // show the add device dialog window
