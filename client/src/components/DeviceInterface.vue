@@ -85,6 +85,14 @@
               <q-item-section class="text-weight-bold">{{ f.field_name }}</q-item-section>
               <q-item-section>{{ f.field_value }}</q-item-section>
             </q-item>
+
+            <q-item class="text-weight-bold justify-center" color="primary">Available Commands</q-item>
+
+            <q-item v-for="c in device.commands" :key="c.cmd_name">
+              <q-item-section class="text-weight-bold">{{ c.cmd_name }}</q-item-section>
+              <q-item-section>{{ c.cmd_value }}</q-item-section>
+            </q-item>
+
           </q-list>
         </q-card-section>
       </div>

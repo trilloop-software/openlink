@@ -6,15 +6,22 @@
         <q-toolbar-title>Configure</q-toolbar-title>
       </q-toolbar>
     </q-page-sticky>
-    <q-btn
+
+    <div class="fit row justify-end">
+      <q-btn
       class="bg-red text-white"
       flat
       dense
       label="LOCK DEVICES"
       @click="lockDevices"
-    />
-
-    <div class="fit row justify-end">
+      />
+      <q-btn
+      class="bg-green text-white"
+      flat
+      dense
+      label="UNLOCK DEVICES"
+      @click="unlockDevices"
+      />
       <q-btn
         color="primary"
         flat
@@ -97,6 +104,21 @@ export default {
         })
 
       window.location.reload()
+    }
+
+    function unlockDevices(){
+      invoke("unlock_devices")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
     }
 
     // show the add device dialog window
@@ -186,6 +208,7 @@ export default {
 
     return {
       lockDevices,
+      unlockDevices,
       addDeviceDialog,
       addDevice,
       configureDeviceDialog,

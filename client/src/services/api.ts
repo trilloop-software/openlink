@@ -13,6 +13,16 @@ export function lockDevices(deviceList: Ref<Device[]>) {
     })
 }
 
+export function unlockDevices(device: Device) {  
+  invoke("unlock_devices")
+    .then((response) => {
+      alert(response)
+    })
+    .catch((error) => {
+      alert('Error:' + error)
+    })
+}
+
 export function addDevice(device: Device) {  
   invoke("add_device", { dev: JSON.stringify(device) })
     .then((response) => {
