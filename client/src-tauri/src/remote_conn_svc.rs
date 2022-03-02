@@ -3,7 +3,7 @@ use quinn::{ClientConfig, Endpoint};
 use std::{sync::Arc, net::SocketAddr};
 use tauri::State;
 
-use super::packet::*;
+use openlink_packets::{remote_conn_packet::*};
 
 /// establishes persistent QUIC connection to pod computer and stores in a tauri state if successful
 /// returns a boolean to the frontend representing connection state
@@ -45,7 +45,7 @@ pub async fn connect(addr: String, conn_state: State<'_, super::Connection>) -> 
 /// utilizes QUIC connection to send and receive packets from the pod computer
 /// returns a result packet with either a valid payload or an error
 /// match statements are used to adequately handle errors rather than crashing the tauri thread
-pub async fn send_(conn: &quinn::Connection, pkt: Packet) -> Result<Packet, String> {
+pub async fn send_(conn: &quinn::Connection, pkt: RemotePacket) -> Result<RemotePacket, String> {
     let (mut send, recv) = match conn.open_bi().await {
         Ok((send, recv)) => (send, recv),
         Err(_) => return Err(s!["Failed to open send and receive streams"])
@@ -75,7 +75,7 @@ pub async fn send_(conn: &quinn::Connection, pkt: Packet) -> Result<Packet, Stri
 /// Set up QUIC client and send request from Vue frontend on SendStream
 /// Receive response on RecvStream and decode into packet
 /// Return packet to Vue frontend
-pub async fn send(server_addr: SocketAddr, pkt: Packet) -> Result<Packet> {
+pub async fn send(server_addr: SocketAddr, pkt: RemotePacket) -> Result<RemotePacket> {
     let client_cfg = configure_client();
 
     let mut endpoint = Endpoint::client("0.0.0.0:0".parse().unwrap())?;    

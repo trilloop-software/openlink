@@ -21,7 +21,6 @@ mod launch_svc;
 use launch_svc::{launch};
 
 mod device;
-mod packet;
 mod remote_conn_svc;
 
 #[derive(Default)]
