@@ -6,7 +6,8 @@
         <q-toolbar-title>Dashboard</q-toolbar-title>
       </q-toolbar>
     </q-page-sticky>
-
+<label id = "podStat"></label>
+<q-btn class = "same-length" push color="primary" label="Refresh" @click= "getPodState"/>
     <div class="fit column items-center q-gutter-y-lg">
       <q-input placeholder="Example: 100000"/>
       <q-btn class = "same-length" push color="primary" label="Set Course Destination" @click= "setDestination"/>
@@ -28,6 +29,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 export default {
   name: 'Dashboard',
   setup: () => {
+    getPodState()
     function setDestination() {
     invoke("set_destination").then((response) => {
         alert("Success: " + response);
@@ -42,6 +44,7 @@ export default {
       }).catch((err) =>{
         alert("Error: " + err);
       });
+      getPodState();
     }
 
     function stop() {
@@ -50,6 +53,7 @@ export default {
       }).catch((err) =>{
         alert("Error: " + err);
       });
+      getPodState();
     }
 
     function emergencyStop() {
@@ -58,9 +62,19 @@ export default {
       }).catch((err) =>{
         alert("Error: " + err);
       });
+      getPodState();
+    }
+    function getPodState(){
+      invoke("get_pod_state").then((response) => {
+        document.getElementById('podStat').innerHTML = ("Pod Status: " + response);
+        
+        //alert("Pod Status: " + response);
+      }).catch((err) => {
+        alert("Error: " + err);
+      });
     }
 
-    return {setDestination, launch, stop, emergencyStop}
+    return {setDestination, launch, stop, emergencyStop, getPodState}
   }
 }
 </script>
