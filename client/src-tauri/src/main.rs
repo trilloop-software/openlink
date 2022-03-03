@@ -20,7 +20,6 @@ use emerg_svc::{emergency_stop};
 mod launch_svc;
 use launch_svc::{launch};
 
-mod device;
 mod remote_conn_svc;
 
 #[derive(Default)]
