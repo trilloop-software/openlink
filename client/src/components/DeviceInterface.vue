@@ -1,80 +1,139 @@
 <template>
-    <div>
-        <h2>Placeholder {{device_type}}</h2>
+  <q-card class="device-card" flat bordered>
+    <q-item>
+      <q-card-section avatar>
+        <q-icon color="primary" :name="getDeviceIcon(device.device_type)" size="lg" />
+      </q-card-section>
 
-        <div class = "generic-field">
-            <label for="ip_address">IP Address: </label>
-            <input name="ip_address">
-        </div>
+      <q-card-section>
+        <q-item-label>{{ device.name }}</q-item-label>
+        <q-item-label caption class="text-uppercase">{{ device.device_type }}</q-item-label>
+      </q-card-section>
 
-        <div class = "generic-field">
-            <label for="conection_metric">Metric for Connection Strength: </label>
-            <label name="conection_metric">______</label>
-        </div>
+      <q-space />
 
-        <div class = "generic-field">
-            <label for="connection_status">Connection Status: </label>
-            <select name="connection_status" id="connection_status">
-            <option value="Safe">Safe (above safety threshold)</option>
-            <option value="Unsafe">Unsafe (below safety threshold)</option>
-            <option value="Offline">Offline (disconnected/not found)</option>
-            </select>
-        </div>
+      <q-card-actions>
+        <q-btn v-if="device.connection_status == 'Connected' && device.device_status == 'Operational'" 
+          color="green"
+          round
+          flat
+          dense
+          icon="check_circle"
+          @click="deviceDiagnostics(device)"
+        >
+          <q-tooltip>
+            Device is connected and operational
+          </q-tooltip>
+        </q-btn>
 
-        <div class = "device-specific-field" v-for="field in getFields(device_type)" :key="field">
-            {{field}}: 
-        </div>
+        <q-btn v-else              
+          color="red"
+          round
+          flat
+          dense
+          icon="warning"
+          @click="deviceDiagnostics(device)"
+        >
+          <q-tooltip>
+            Device is <span class="text-lowercase">{{ device.connection_status }}</span> and
+            <span class="text-lowercase">{{ device.device_status }}</span>
+          </q-tooltip>
+        </q-btn>
 
-    </div>
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          icon="settings"
+          @click="deviceConfigure(device)"
+        />
 
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="expanded = !expanded"
+        />
+      </q-card-actions>
+    </q-item>
+
+    <q-slide-transition>
+      <div v-show="expanded">
+        <q-separator />
+
+        <q-card-section>
+          <q-list dense separator>
+            <q-item class="fit row justify-between">
+              <q-item-section class="text-weight-bold">IP Address</q-item-section>
+              <q-item-section>{{ device.ip_address }}:{{ device.port }}</q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-weight-bold">Connection Status</q-item-section>
+              <q-item-section>{{ device.connection_status }}</q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-weight-bold">Device Status</q-item-section>
+              <q-item-section>{{ device.device_status }}</q-item-section>
+            </q-item>
+
+            <q-item v-for="f in device.fields" :key="f.field_name">
+              <q-item-section class="text-weight-bold">{{ f.field_name }}</q-item-section>
+              <q-item-section>{{ f.field_value }}</q-item-section>
+            </q-item>
+
+            <q-item class="text-weight-bold justify-center" color="primary">Available Commands</q-item>
+
+            <q-item v-for="c in device.commands" :key="c.cmd_name">
+              <q-item-section class="text-weight-bold">{{ c.cmd_name }}</q-item-section>
+              <q-item-section>{{ c.cmd_value }}</q-item-section>
+            </q-item>
+
+          </q-list>
+        </q-card-section>
+      </div>
+    </q-slide-transition>
+  </q-card>
 </template>
 
-<script>
+<script lang="ts">
+import { ref, PropType } from 'vue'
+import { Device, getDeviceIcon } from '@/libs/device'
+
 export default {
   name: 'DeviceInterface',
-
-  // define functions that can be called 
-  methods: {
-    getFields(type){
-        let fields = [];
-        switch(type){
-            case "Battery":
-                fields = battery_fields;
-                break;
-            case "Inverter":
-                fields = inverter_fields;
-                break;
-        }
-        return fields;
-    }
-  },
-  //parameters that can be passed in from external sources
   props: {
-    device_type: String
+    device: { type: Object as PropType<Device>, default: new Device }
   },
-    // define data that can be referenced
-  data(){
-    return{
-        battery_fields,
-        inverter_fields,
+  emits: ['configure-device', 'device-diagnostics'],
+  setup: (props: any, { emit }) => {
+    function deviceConfigure(dev: Device) {
+      emit('configure-device', dev, false)
+    }
+
+    function deviceDiagnostics(dev: Device) {
+      emit('device-diagnostics', dev)
+    }
+
+    return {
+      expanded: ref(false),
+      deviceConfigure,
+      deviceDiagnostics,
+      getDeviceIcon
     }
   }
 }
-
-var battery_fields = ["Temperature", "Power"];
-var inverter_fields = ["Inverter Field 1", "Inverter Field 2"];
-
 </script>
 
-<style>
-    .generic-field{
-        text-align: left;
-        border-style: solid;
-        border-color: #460d86;
-    }
-    .device-specific-field{
-        text-align: left;
-        border-style: solid;
-        border-color: #9c9c9c;
-    }
+<style lang="sass" scoped>
+.device-card
+  width: 100%
+  max-width: 460px
+
+.error
+  color: 'red'
 </style>

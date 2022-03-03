@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lff">
+  <q-layout view="hHh Lpr lff" class="disable-select">
     <q-header elevated bordered>
       <q-toolbar>
         <q-btn
@@ -58,6 +58,18 @@
           <q-item-section>
             <q-item-label>Manage</q-item-label>
             <q-item-label caption>Add, Modify & Remove Users</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator />
+
+        <q-item clickable to="/telemetry">
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Telemetry</q-item-label>
+            <q-item-label caption>View Telemetry Data</q-item-label>
           </q-item-section>
         </q-item>
 

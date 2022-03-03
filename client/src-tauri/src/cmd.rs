@@ -1,24 +1,22 @@
 use tauri::{command};
-
 #[command]
 pub fn test() -> String {
     "Message passing works!".to_string()
 }
+
 #[command]
-pub fn stop() -> String //in the future, we will want to actually send a message to the backend here.
-{
-    "Stop command sent".to_string()
+pub fn ping_device(name:&str) -> String{
+
+    let mut owned_string: String = "Ping Request received for ".to_owned();
+    let borrowed_string: &str = name;
+    
+    owned_string.push_str(borrowed_string);
+
+    //return a string for now
+    //parsing the actual request
+    return owned_string;
 }
-#[command]
-pub fn emergency_stop() -> String //same as above.
-{
-    "Emergency stop command sent".to_string()
-}
-#[command]
-pub fn launch() -> String 
-{
-    "Start command sent".to_string()
-}
+
 #[command]
 pub fn set_destination() -> String 
 {

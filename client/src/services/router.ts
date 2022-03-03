@@ -4,6 +4,7 @@ import Configure from '@/pages/Configure.vue'
 import Dashboard from '@/pages/Dashboard.vue'
 import Start from '@/pages/Start.vue'
 import Manage from '@/pages/Manage.vue'
+import Telemetry from '@/pages/Telemetry.vue'
 
 export default createRouter({
     history: createWebHashHistory(),
@@ -27,6 +28,11 @@ export default createRouter({
             name: 'Manage',
             path: '/manage',
             component: Manage
+        },
+        {
+            name: 'Telemetry',
+            path: '/telemetry',
+            component: Telemetry
         },
         {
             path: '/.*',
