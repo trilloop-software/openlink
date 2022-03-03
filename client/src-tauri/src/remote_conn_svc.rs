@@ -3,7 +3,7 @@ use quinn::{ClientConfig, Endpoint};
 use std::{sync::Arc, net::SocketAddr};
 use tauri::State;
 
-use openlink_packets::{remote_conn_packet::*};
+use shared::{remote_conn_packet::*};
 
 /// establishes persistent QUIC connection to pod computer and stores in a tauri state if successful
 /// returns a boolean to the frontend representing connection state

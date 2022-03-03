@@ -2,8 +2,8 @@ use anyhow::Result;
 use serde_json;
 use tauri::{command, State};
 
-use openlink_packets::{remote_conn_packet::*};
-use super::{device::*, remote_conn_svc::*};
+use shared::{remote_conn_packet::*, device::*};
+use super::remote_conn_svc::*;
 
 #[command]
 pub async fn lock_devices(conn_state: State<'_, super::Connection>) -> Result<String, String> {

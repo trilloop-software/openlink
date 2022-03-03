@@ -1,6 +1,6 @@
 use tauri::{command};
 
-use openlink_packets::{remote_conn_packet::*};
+use shared::{remote_conn_packet::*};
 use super::{remote_conn_svc::*};
 #[command]
 pub async fn stop() -> String{
