@@ -9,7 +9,8 @@ pub struct RemotePacket {
     pub cmd_type: u8,
     pub timestamp: SystemTime,
     pub target_cmd_code: u8, //command to be sent to the device in the payload
-    pub payload: Vec<String>
+    pub payload: Vec<String>,
+    pub token: String,
 }
 
 impl RemotePacket {
@@ -17,10 +18,23 @@ impl RemotePacket {
         Self {
             packet_id: s!["OPENLINK"],
             version: 1,
-            cmd_type: cmd_type,
+            cmd_type,
             timestamp: std::time::SystemTime::now(),
             target_cmd_code:0,
-            payload: payload
+            payload,
+            token: s![""]
+        }
+    }
+
+    pub fn new_with_auth(cmd_type: u8, payload: Vec<String>, token: String) -> Self {
+        Self {
+            packet_id: s!["OPENLINK"],
+            version: 1,
+            cmd_type,
+            timestamp: std::time::SystemTime::now(),
+            target_cmd_code: 0,
+            payload,
+            token
         }
     }
 }

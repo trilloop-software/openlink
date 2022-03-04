@@ -10,22 +10,46 @@
       />
     </template>
   </q-input>
-  <q-btn class="login-inputs" push color="primary" label="Login" />
+  <q-btn class="login-inputs" push color="primary" label="Login" @click="login" />
 </template>
 
 <script lang="ts">
-//import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/tauri'
 import { ref } from 'vue'
 
 export default {
   name: 'Login',
-  setup: () => {
+  emits: ['loginSuccess','loginError','warning'],
+  setup: (props: any, { emit }) => {
     const hidePassword = ref(true)
     const password = ref("")
     const username = ref("")
 
+    const invalid = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/
+
+    function login() {
+      if (invalid.test(username.value)) {
+        emit('warning', 'Invalid characters detected in username')
+        return
+      }
+
+      if (invalid.test(password.value)) {
+        emit('warning', 'Invalid characters detected in password')
+        return
+      }
+
+      invoke("login", { username: username.value, password: password.value })
+        .then((response) => {
+          emit('loginSuccess', response)
+        })
+        .catch((error) => {
+          emit('loginError', error)
+        })
+    }
+
     return {
       hidePassword,
+      login,
       password,
       username
     }

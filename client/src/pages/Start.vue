@@ -8,7 +8,7 @@
     </template>
       
     <template v-else>
-      <login />
+      <login @loginSuccess="loginSuccess" @loginError="loginError" @warning="warning" />
     </template>
 
     <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg"/>
@@ -35,6 +35,7 @@ export default {
     Notification,
   },
   setup: () => {
+    const authenticated = ref(false)
     const connected = ref(false)
 
     const notifyShow = ref(false)
@@ -54,6 +55,19 @@ export default {
       notifyMsg.value = error
     }
 
+    function loginSuccess(response) {
+      authenticated.value = true
+      notifyShow.value = true
+      notifyKind.value = 'positive'
+      notifyMsg.value = response
+    }
+
+    function loginError(error) {
+      notifyShow.value = true
+      notifyKind.value = 'negative'
+      notifyMsg.value = error
+    }
+
     function warning(error) {
       notifyShow.value = true
       notifyKind.value = 'warning'
@@ -67,6 +81,8 @@ export default {
       notifyMsg,
       connectionSuccess,
       connectionError,
+      loginSuccess,
+      loginError,
       warning,
     }
   }

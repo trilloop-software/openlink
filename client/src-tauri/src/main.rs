@@ -10,6 +10,7 @@ use cmd::{test, ping_device, set_destination};
 
 mod api_svc;
 use api_svc::{lock_devices, unlock_devices, add_device, get_device_list, remove_device, update_device};
+mod auth_svc;
 
 mod brake_svc;
 use brake_svc::{stop};
@@ -24,11 +25,13 @@ mod remote_conn_svc;
 
 #[derive(Default)]
 pub struct Connection(tauri::async_runtime::Mutex<Option<quinn::Connection>>);
+pub struct Token(tauri::async_runtime::Mutex<String>);
 
 #[tokio::main]
 async fn main() {
   tauri::Builder::default()
     .manage(Connection(Default::default()))
+    .manage(Token(Default::default()))
     .invoke_handler(tauri::generate_handler![
       test,
       lock_devices,
@@ -43,6 +46,7 @@ async fn main() {
       set_destination,
       launch,
       remote_conn_svc::connect,
+      auth_svc::login,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
