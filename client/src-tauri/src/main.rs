@@ -9,7 +9,8 @@ mod cmd;
 use cmd::{test, ping_device, set_destination};
 
 mod api_svc;
-use api_svc::{lock_devices, unlock_devices, add_device, get_device_list, remove_device, update_device};
+use api_svc::{lock_devices, unlock_devices, add_device, get_device_list, remove_device, update_device, get_pod_state};
+
 mod auth_svc;
 
 mod brake_svc;
@@ -34,6 +35,7 @@ async fn main() {
     .manage(Token(Default::default()))
     .invoke_handler(tauri::generate_handler![
       test,
+      get_pod_state,
       lock_devices,
       unlock_devices,
       add_device,

@@ -159,3 +159,16 @@ pub async fn update_device(dev: String, conn_state: State<'_, super::Connection>
     // send success response to frontend
     Ok(data.payload[0].clone())
 }
+
+#[command]
+pub async fn get_pod_state(conn_state: State<'_, super::Connection>) -> Result<String, String> {
+    // ensure valid connection to pod computer
+    let conn = &*conn_state.0.lock().await;
+    let conn = conn_test!(conn);
+
+    let data = match send_(&conn, RemotePacket::new(64, vec![s![""]])).await{
+        Ok(p) => p,
+        Err(e) => return Err(s![e])
+    };
+    Ok(data.payload[0].clone())
+}
