@@ -37,6 +37,12 @@ impl RemotePacket {
             token
         }
     }
+
+    pub fn error(mut self, msg: String) -> Self {
+        self.cmd_type = 0;
+        self.payload[0] = msg;
+        self
+    }
 }
 
 pub fn decode(pkt: Vec<u8>) -> RemotePacket {

@@ -22,6 +22,7 @@ use emerg_svc::{emergency_stop};
 mod launch_svc;
 use launch_svc::{launch};
 
+mod users;
 mod remote_conn_svc;
 
 #[derive(Default)]
@@ -49,6 +50,11 @@ async fn main() {
       launch,
       remote_conn_svc::connect,
       auth_svc::login,
+      users::add_user,
+      users::get_user_list,
+      users::remove_user,
+      users::update_user_group,
+      users::update_user_password,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
