@@ -1,6 +1,3 @@
-import { invoke } from '@tauri-apps/api/tauri'
-import { IPv4 } from 'ip-num/IPNumber'
-
 // *** custom types to use as device properties
 export enum DeviceType {
   Battery = 'Battery',
@@ -90,16 +87,6 @@ export class Device {
 
   generateID() { // TEMPORARY FUNCTION, MOVE TO RUST FRONTEND EVENTUALLY
     return Math.random().toString(36).substring(2, 9)
-  }
-
-  ping(name, ip, port) {
-    invoke('ping_device', { name: name })
-      .then((response) => {
-        alert('Successful: ' + response)
-      })
-      .catch((error) => {
-        alert('Error: ' + error)
-      })
   }
 }
 
