@@ -5,25 +5,8 @@
 #[macro_use]
 mod macros;
 
-mod cmd;
-use cmd::{test, ping_device, set_destination};
-
-mod api_svc;
-use api_svc::{lock_devices, unlock_devices, add_device, get_device_list, remove_device, update_device, get_pod_state};
-
-mod auth_svc;
-
-mod brake_svc;
-use brake_svc::{stop};
-
-mod emerg_svc;
-use emerg_svc::{emergency_stop};
-
-mod launch_svc;
-use launch_svc::{launch};
-
-mod users;
-mod remote_conn_svc;
+mod api;
+use api::*;
 
 #[derive(Default)]
 pub struct Connection(tauri::async_runtime::Mutex<Option<quinn::Connection>>);
@@ -34,22 +17,19 @@ async fn main() {
   tauri::Builder::default()
     .manage(Connection(Default::default()))
     .manage(Token(Default::default()))
-    .invoke_handler(tauri::generate_handler![
-      test,
-      get_pod_state,
-      lock_devices,
-      unlock_devices,
-      add_device,
-      get_device_list,
-      remove_device,
-      update_device,
-      ping_device,
-      stop,
-      emergency_stop,
-      set_destination,
-      launch,
-      remote_conn_svc::connect,
-      auth_svc::login,
+    .invoke_handler(tauri::generate_handler![      
+      auth::login,
+      controls::launch,
+      controls::set_destination,
+      controls::stop,
+      link::add_device,
+      link::get_device_list,
+      link::get_pod_state,
+      link::lock_devices,
+      link::remove_device,
+      link::update_device,
+      link::unlock_devices,
+      remote_conn::connect,
       users::add_user,
       users::get_user_list,
       users::remove_user,

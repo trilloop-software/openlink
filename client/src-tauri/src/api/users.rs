@@ -2,10 +2,10 @@ use serde_json;
 use tauri::{command, State};
 
 use shared::{remote_conn_packet::*, user::*};
-use super::remote_conn_svc::*;
+use super::{super::{Connection, Token}, remote_conn::*};
 
 #[command]
-pub async fn add_user(user: String, conn_state: State<'_, super::Connection>, token: State<'_, super::Token>) -> Result<String, String> {
+pub async fn add_user(user: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
 
@@ -19,7 +19,7 @@ pub async fn add_user(user: String, conn_state: State<'_, super::Connection>, to
 
     let user = serde_json::to_string(&user).unwrap();
 
-    let data = match send_(&conn, RemotePacket::new_with_auth(160, vec![user], token)).await {
+    let data = match send(&conn, RemotePacket::new_with_auth(160, vec![user], token)).await {
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
@@ -28,14 +28,14 @@ pub async fn add_user(user: String, conn_state: State<'_, super::Connection>, to
 }
 
 #[command]
-pub async fn get_user_list(conn_state: State<'_, super::Connection>, token: State<'_, super::Token>) -> Result<String, String> {
+pub async fn get_user_list(conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
     // ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
 
     let token = s!(&*token.0.lock().await);
 
-    let data = match send_(&conn, RemotePacket::new_with_auth(162, vec![s!("")], token)).await {
+    let data = match send(&conn, RemotePacket::new_with_auth(162, vec![s!("")], token)).await {
         Ok(p) => p,
         Err(e) => return Err(s![e])
     };
@@ -44,14 +44,14 @@ pub async fn get_user_list(conn_state: State<'_, super::Connection>, token: Stat
 }
 
 #[command]
-pub async fn remove_user(name: String, conn_state: State<'_, super::Connection>, token: State<'_, super::Token>) -> Result<String, String> {
+pub async fn remove_user(name: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
     // ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
 
     let token = s!(&*token.0.lock().await);
 
-    let data = match send_(&conn, RemotePacket::new_with_auth(163, vec![name], token)).await {
+    let data = match send(&conn, RemotePacket::new_with_auth(163, vec![name], token)).await {
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
@@ -60,7 +60,7 @@ pub async fn remove_user(name: String, conn_state: State<'_, super::Connection>,
 }
 
 #[command]
-pub async fn update_user_group(user: String, conn_state: State<'_, super::Connection>, token: State<'_, super::Token>) -> Result<String, String> {
+pub async fn update_user_group(user: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
     // ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
@@ -74,7 +74,7 @@ pub async fn update_user_group(user: String, conn_state: State<'_, super::Connec
 
     let user = serde_json::to_string(&user).unwrap();
 
-    let data = match send_(&conn, RemotePacket::new_with_auth(164, vec![user], token)).await {
+    let data = match send(&conn, RemotePacket::new_with_auth(164, vec![user], token)).await {
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
@@ -83,7 +83,7 @@ pub async fn update_user_group(user: String, conn_state: State<'_, super::Connec
 }
 
 #[command]
-pub async fn update_user_password(user: String, conn_state: State<'_, super::Connection>, token: State<'_, super::Token>) -> Result<String, String> {
+pub async fn update_user_password(user: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
     // ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
@@ -97,7 +97,7 @@ pub async fn update_user_password(user: String, conn_state: State<'_, super::Con
 
     let user = serde_json::to_string(&user).unwrap();
 
-    let data = match send_(&conn, RemotePacket::new_with_auth(165, vec![user], token)).await {
+    let data = match send(&conn, RemotePacket::new_with_auth(165, vec![user], token)).await {
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
