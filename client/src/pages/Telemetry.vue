@@ -7,8 +7,9 @@
       </q-toolbar>
     </q-page-sticky> 
 
-<v-simple-table>
-    <template v-slot:default>
+<h2>Telemetry Data</h2>
+
+<v-simple-table id = "telemetry" width="100%">
       <thead>
         <tr>
           <th class="text-left">
@@ -21,25 +22,53 @@
       </thead>
       <tbody>
         <tr
-          v-for="item in items"
+          v-for="item in data"
           :key="item.value"
         >
           <td>{{ item.category }}</td>
           <td>{{ item.value }}</td>
         </tr>
       </tbody>
-    </template>
   </v-simple-table>
 
   </q-page>
 </template>
+
+<style>
+
+body { margin:0;padding:0; }
+
+#telemetry {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#telemetry td, #telemetry th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#telemetry tr:nth-child(even){background-color: #f2f2f2;}
+
+#telemetry tr:hover {background-color: #ddd;}
+
+#telemetry th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4F2683;
+  color: white;
+}
+
+</style>
 
 <script>
 
 export default {
     data() {
       return {
-        items: [
+        data: [
           {category: 'Accelerometer', value: 0},
           {category: 'Brake Temperature', value: 50},
           {category: 'Battery Temperature', value: 30},
