@@ -36,12 +36,12 @@
 
 <style>
 
-body { margin:0;padding:0; }
-
 #telemetry {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  table-layout: fixed;
+  display: table;
 }
 
 #telemetry td, #telemetry th {
