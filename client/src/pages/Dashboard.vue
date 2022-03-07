@@ -6,91 +6,126 @@
         <q-toolbar-title>Dashboard</q-toolbar-title>
       </q-toolbar>
     </q-page-sticky>
-<label id = "podStat"></label>
-<q-btn class = "same-length" push color="primary" label="Refresh" @click= "getPodState"/>
-    <div class="fit column items-center q-gutter-y-lg">
-      <q-input id = "time-distance" placeholder="Example: 100000"/>
-      <q-btn class = "same-length" id = "destin" push color="primary" label="Set Course Destination" @click= "setDestination"/>
-      <q-btn class = "same-length" id = "launch" push color="primary" label="Launch Pod" @click= "launch"/>
-      <q-btn class = "same-length" id = "stop" push color="primary" label="Stop Pod" @click= "stop"/>
+
+    <div class="row">
+      <div class="col q-pt-md">
+        <pod-state-display v-model:state="podState" />
+        <controls v-model:state="podState" @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" />
+      </div>
+      <div class="col">
+        <telemetry />
+      </div>
     </div>
+
+    <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg" />
   </q-page>
 </template>
 
-<style>
-.same-length {
-  width: 250px;
-}
-</style>
-
 <script lang="ts">
+import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
+
+import Controls from '@/components/Controls.vue'
+import Notification from '@/components/Notification.vue'
+import PodStateDisplay from '@/components/PodStateDisplay.vue'
+import Telemetry from '@/components/Telemetry.vue'
+import { PodState } from '@/types/podstate'
+
 export default {
   name: 'Dashboard',
+  components: {
+    Controls,
+    Notification,
+    PodStateDisplay,
+    Telemetry,
+  },
   setup: () => {
+    const distance = ref(undefined)
+    const maxSpeed = ref(undefined)
+    const podState = ref(PodState.Unlocked)
+
+    const notifyShow = ref(false)
+    const notifyKind = ref('positive')
+    const notifyMsg = ref('')
+
     getPodState()
+
     function setDestination() {
-    invoke("set_destination").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
+      invoke("set_destination", { params: JSON.stringify({ distance: distance.value, max_speed: maxSpeed.value })})
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
     }
 
-    function launch() {
-    invoke("launch").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
-      getPodState();
+    function launchPod() {
+      invoke("launch")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
+      getPodState()
     }
 
-    function stop() {
-      invoke("stop").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
-      getPodState();
+    function stopPod() {
+      invoke("stop")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
+      getPodState()
     }
 
     function getPodState(){
-      invoke("get_pod_state").then((response) => {
-        //response = "\"Locked\""; // manually testing
-        document.getElementById('podStat').innerHTML = ("Pod Status: " + response);
-        if(response == "\"Unlocked\""){
-          document.getElementById("destin").style.display = 'none';
-          document.getElementById("launch").style.display = 'none';
-          document.getElementById("stop").style.display = 'none';
-        }
-        else if(response == "\"Locked\""){
-          document.getElementById("destin").style.display = 'block';
-          document.getElementById("launch").style.display = 'block';
-          document.getElementById("stop").style.display = 'none';
-        }
-        else if(response == "\"Moving\""){
-          document.getElementById("destin").style.display = 'none';
-          document.getElementById("launch").style.display = 'none';
-          document.getElementById("stop").style.display = 'block';
-        }
-        else if(response == "\"Braking\""){
-          document.getElementById("destin").style.display = 'none';
-          document.getElementById("launch").style.display = 'none';
-          document.getElementById("stop").style.display = 'none';
-
-        }
-        //alert("Pod Status: " + response);
-      }).catch((err) => {
-        alert("Error: " + err);
-      });
+      invoke("get_pod_state")
+        .then((response) => {
+          if (response == "\"Unlocked\"") {
+            podState.value = PodState.Unlocked
+          }
+          else if (response == "\"Locked\"") {
+            podState.value = PodState.Locked
+          }
+          else if (response == "\"Moving\"") {
+            podState.value = PodState.Moving
+          }
+          else if (response == "\"Braking\"") {
+            podState.value = PodState.Braking
+          }
+        }).catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
     }
 
     return {
+      distance,
       getPodState,
-      launch,
+      launchPod,
+      maxSpeed,
+      notifyShow,
+      notifyKind,
+      notifyMsg,
+      podState,
       setDestination,
-      stop,
+      stopPod,
     }
   }
 }

@@ -18,7 +18,9 @@ async fn main() {
     .manage(Connection(Default::default()))
     .manage(Token(Default::default()))
     .invoke_handler(tauri::generate_handler![      
+      auth::check_auth,
       auth::login,
+      auth::logout,
       controls::launch,
       controls::set_destination,
       controls::stop,
@@ -29,6 +31,7 @@ async fn main() {
       link::remove_device,
       link::update_device,
       link::unlock_devices,
+      remote_conn::check_conn,
       remote_conn::connect,
       users::add_user,
       users::get_user_list,

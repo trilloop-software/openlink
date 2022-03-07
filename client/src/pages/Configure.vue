@@ -69,7 +69,6 @@ import DeviceEdit from '@/components/DeviceEdit.vue'
 import DeviceInterface from '@/components/DeviceInterface.vue'
 import Notification from '@/components/Notification.vue'
 import { Device } from '@/libs/device'
-//import { /*addDevice, getDeviceList, removeDevice, updateDevice*/ } from '@/services/api'
 
 export default {
   name: 'Configure',

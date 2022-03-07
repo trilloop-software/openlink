@@ -1,15 +1,25 @@
 use anyhow::Result;
 use quinn::{ClientConfig, Endpoint};
 use std::sync::Arc;
-use tauri::State;
+use tauri::{command, State};
 
 use shared::{remote_conn_packet::*};
 use super::super::Connection;
 
+#[command]
+pub async fn check_conn(conn_state: State<'_, Connection>) -> Result<bool, bool> {
+    let conn = &*conn_state.0.lock().await;
+
+    match conn {
+        Some(_) => Ok(true),
+        None => Err(false)
+    }
+}
+
 /// establishes persistent QUIC connection to pod computer and stores in a tauri state if successful
 /// returns a boolean to the frontend representing connection state
 /// match statements are used to adequately handle errors rather than crashing the tauri thread
-#[tauri::command]
+#[command]
 pub async fn connect(addr: String, conn_state: State<'_, Connection>) -> Result<String, String> {
     let server_addr = addr.parse().unwrap();
 

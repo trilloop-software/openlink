@@ -43,9 +43,9 @@ pub async fn login(username: String, password: String, conn_state: State<'_, Con
 }
 
 #[command]
-pub async fn logout(token: State<'_, Token>) -> String {
+pub async fn logout(token: State<'_, Token>) -> Result<String, String> {
     // delete the auth token
     *token.0.lock().await = s!("");
 
-    s!("Logged out")
+    Ok(s!("Logged out"))
 }

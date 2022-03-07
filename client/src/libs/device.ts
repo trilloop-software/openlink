@@ -85,12 +85,11 @@ export class Device {
     this.commands = JSON.parse(JSON.stringify(dev.commands)) as DeviceCommands[]
   }
 
-  generateID() { // TEMPORARY FUNCTION, MOVE TO RUST FRONTEND EVENTUALLY
+  generateID() {
     return Math.random().toString(36).substring(2, 9)
   }
 }
 
-// *** MOVE THESE TO CLIENT SIDE CONFIG FILE/DATABASE ENTRY TO ALLOW USER MODIFICATIONS OF DEFAULTS + ADDITIONAL DEVICE TYPES EVENTUALLY
 // battery specific properties/functions
 export class Battery extends Device implements IDevice {
   id = this.generateID()
@@ -100,8 +99,7 @@ export class Battery extends Device implements IDevice {
   port = 0
   connection_status = ConnectionStatus.Connected
   device_status = DeviceStatus.Operational
-  fields = [{ field_name: 'Temperature', field_value: '' },
-            { field_name: 'Power', field_value: '' }]
+  fields = []
   commands = []
 }
 
@@ -114,8 +112,7 @@ export class Inverter extends Device implements IDevice {
   port = 0
   connection_status = ConnectionStatus.Connected
   device_status = DeviceStatus.Unsafe
-  fields = [{ field_name: 'Inverter Field 1', field_value: '' },
-            { field_name: 'Inverter Field 2', field_value: '' }]
+  fields = []
   commands = []
 }
 

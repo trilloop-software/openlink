@@ -63,18 +63,6 @@
 
         <q-separator />
 
-        <q-item clickable to="/telemetry">
-          <q-item-section avatar>
-            <q-icon name="settings" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Telemetry</q-item-label>
-            <q-item-label caption>View Telemetry Data</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-separator />
-
         <q-item clickable to="/start">
           <q-item-section avatar>
             <q-icon name="logout" />

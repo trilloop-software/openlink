@@ -1,15 +1,6 @@
 <template>
-  <q-page class="full-width column wrap" padding style="padding-top: 66px;">
-    <q-page-sticky position="top" expand class="bg-grey text-white">
-      <q-toolbar>
-        <q-icon name="settings" size="md"/>
-        <q-toolbar-title>Telemetry</q-toolbar-title>
-      </q-toolbar>
-    </q-page-sticky> 
-
-<h2>Telemetry Data</h2>
-
-<v-simple-table id = "telemetry" width="100%">
+  <h2>Telemetry Data</h2>
+  <v-simple-table id = "telemetry" width="100%">
       <thead>
         <tr>
           <th class="text-left">
@@ -30,8 +21,6 @@
         </tr>
       </tbody>
   </v-simple-table>
-
-  </q-page>
 </template>
 
 <style>

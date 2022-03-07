@@ -11,18 +11,13 @@
       <login @loginSuccess="loginSuccess" @loginError="loginError" @warning="warning" />
     </template>
 
-    <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg"/>
+    <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg" />
   </q-page>
 </template>
 
 <script lang="ts">
 import { ref } from 'vue'
 
-/**
- * For some reason, VS Code on John's PC cannot find '@/components/Connect.vue'
- * Shows an error in the IDE
- * But the app still runs fine
- */
 import Connect from '@/components/Connect.vue'
 import Login from '@/components/Login.vue'
 import Notification from '@/components/Notification.vue'

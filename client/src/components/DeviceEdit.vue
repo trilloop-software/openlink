@@ -42,15 +42,6 @@
           @click="removeDevice(activeDevice)"
         />
 
-        <q-btn
-          color="primary"
-          flat
-          dense
-          icon="settings_ethernet"
-          label="PING"
-          @click="activeDevice.ping(activeDevice.name, activeDevice.ip_address, activeDevice.port)"
-        />
-
         <q-btn v-if="newDevice"
           color="primary"
           flat
