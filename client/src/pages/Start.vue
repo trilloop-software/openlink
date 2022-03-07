@@ -3,12 +3,17 @@
 
     <img id="logo" alt="OpenLink logo" src="../assets/logo.svg">
 
-    <template v-if="!connected">
+    <template v-if="!states.connectState">
       <connect @connectionSuccess="connectionSuccess" @connectionError="connectionError" @warning="warning" />
     </template>
       
     <template v-else>
-      <login @loginSuccess="loginSuccess" @loginError="loginError" @warning="warning" />
+      <template v-if="!states.loginState">
+        <login @loginSuccess="loginSuccess" @loginError="loginError" @warning="warning" />
+      </template>
+      <template v-else>
+        <span class="text-center text-h4 text-primary text-weight-medium">LOGGED IN</span>
+      </template>
     </template>
 
     <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg" />
@@ -21,6 +26,7 @@ import { ref } from 'vue'
 import Connect from '@/components/Connect.vue'
 import Login from '@/components/Login.vue'
 import Notification from '@/components/Notification.vue'
+import { statesStore } from '@/stores/states'
 
 export default {
   name: 'Start',
@@ -30,34 +36,35 @@ export default {
     Notification,
   },
   setup: () => {
-    const authenticated = ref(false)
-    const connected = ref(false)
+    const states = statesStore()
 
     const notifyShow = ref(false)
     const notifyKind = ref('positive')
     const notifyMsg = ref('')
 
     function connectionSuccess(response) {
-      connected.value = true
+      states.connectState = true
       notifyShow.value = true
       notifyKind.value = 'positive'
       notifyMsg.value = response
     }
 
     function connectionError(error) {
+      states.connectState = false
       notifyShow.value = true
       notifyKind.value = 'negative'
       notifyMsg.value = error
     }
 
     function loginSuccess(response) {
-      authenticated.value = true
+      states.loginState = true
       notifyShow.value = true
       notifyKind.value = 'positive'
       notifyMsg.value = response
     }
 
     function loginError(error) {
+      states.loginState = false
       notifyShow.value = true
       notifyKind.value = 'negative'
       notifyMsg.value = error
@@ -70,7 +77,6 @@ export default {
     }
 
     return {
-      connected,
       notifyShow,
       notifyKind,
       notifyMsg,
@@ -78,6 +84,7 @@ export default {
       connectionError,
       loginSuccess,
       loginError,
+      states,
       warning,
     }
   }

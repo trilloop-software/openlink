@@ -52,6 +52,13 @@ pub async fn connect(addr: String, conn_state: State<'_, Connection>) -> Result<
     Ok(s!["Connected"])
 }
 
+#[command]
+pub async fn disconnect(conn_state: State<'_, Connection>) -> Result<String, String> {
+    *conn_state.0.lock().await = None;
+
+    Ok(s!("Disconnected"))
+}
+
 /// utilizes QUIC connection to send and receive packets from the pod computer
 /// returns a result packet with either a valid payload or an error
 /// match statements are used to adequately handle errors rather than crashing the tauri thread

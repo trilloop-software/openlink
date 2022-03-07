@@ -33,6 +33,7 @@ async fn main() {
       link::unlock_devices,
       remote_conn::check_conn,
       remote_conn::connect,
+      remote_conn::disconnect,
       users::add_user,
       users::get_user_list,
       users::remove_user,
