@@ -1,6 +1,5 @@
 <template>
-  <!-- JUST FOR SHOW, IMPLEMENT LATER, QUASAR ALSO HAS BUILT IN VALIDATION THAT WE CAN USE WITH :rules PROP -->
-  <q-input class="login-inputs" v-model="username" filled :type="text" placeholder="Username" />
+  <q-input class="login-inputs" v-model="username" filled type="text" placeholder="Username" />
   <q-input class="login-inputs" v-model="password" filled :type="hidePassword ? 'password' : 'text'" placeholder="Password">
     <template v-slot:append>
       <q-icon

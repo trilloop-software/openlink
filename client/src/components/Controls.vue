@@ -1,10 +1,10 @@
 <template>
   <div class="fit column items-center q-gutter-y-lg">
-    <q-input v-model="distance" placeholder="Example: 100"/>
-    <q-input v-model="maxSpeed" />
-    <q-btn class="same-length" :disabled="podState != PodState.Locked" push color="primary" label="Set Destination" @click="setDestination" />
-    <q-btn class="same-length" :disabled="podState != PodState.Locked" push color="primary" label="Launch Pod" @click="launchPod" />
-    <q-btn class="same-length" :disabled="podState != PodState.Moving" push color="primary" label="Stop Pod" @click="stopPod" />
+    <q-input v-model="distance" placeholder="Distance in meters" />
+    <q-input v-model="maxSpeed" placeholder="Speed in km/h" />
+    <q-btn class="same-length" :disabled="states.podState != PodState.Locked" push color="primary" label="Set Destination" @click="setDestination" />
+    <q-btn class="same-length" :disabled="states.podState != PodState.Locked" push color="primary" label="Launch Pod" @click="launchPod" />
+    <q-btn class="same-length" :disabled="states.podState != PodState.Moving" push color="primary" label="Stop Pod" @click="stopPod" />
   </div>
 </template>
 
@@ -18,15 +18,15 @@
 import { ref } from 'vue'
 
 import { PodState } from '@/types/podstate'
-import { useModelWrapper } from '@/utils/modelWrapper'
+import { statesStore } from '@/stores/states'
+
 
 export default {
   name: 'Controls',
-  props: {
-    state: { type: String as () => PodState, default: PodState.Unlocked }
-  },
   emits: ['update:state','launch-pod','set-destination','stop-pod'],
   setup: (props: any, { emit }) => {
+    const states = statesStore()
+
     const distance = ref(undefined)
     const maxSpeed = ref(undefined)
 
@@ -46,9 +46,9 @@ export default {
       distance,
       launchPod,
       maxSpeed,
-      podState: useModelWrapper(props, emit, 'state'),
       PodState,
       setDestination,
+      states,
       stopPod,
     }
   }

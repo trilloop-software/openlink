@@ -24,6 +24,10 @@ pub async fn add_user(user: String, conn_state: State<'_, Connection>, token: St
         Err(e) => return Err(s!(e))
     };
 
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
+
     Ok(data.payload[0].clone())
 }
 
@@ -56,6 +60,10 @@ pub async fn remove_user(name: String, conn_state: State<'_, Connection>, token:
         Err(e) => return Err(s!(e))
     };
 
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
+
     Ok(data.payload[0].clone())
 }
 
@@ -79,6 +87,10 @@ pub async fn update_user_group(user: String, conn_state: State<'_, Connection>, 
         Err(e) => return Err(s!(e))
     };
 
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
+
     Ok(data.payload[0].clone())
 }
 
@@ -101,6 +113,10 @@ pub async fn update_user_password(user: String, conn_state: State<'_, Connection
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
+
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
 
     Ok(data.payload[0].clone())
 }

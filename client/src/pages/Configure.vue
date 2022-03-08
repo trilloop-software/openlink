@@ -7,21 +7,26 @@
       </q-toolbar>
     </q-page-sticky>
 
-    <div class="fit row justify-end">
+    <div class="fit row justify-between">
       <q-btn
-      class="bg-red text-white"
-      flat
-      dense
-      label="LOCK DEVICES"
-      @click="lockDevices"
+        v-if="states.podState == PodState.Unlocked"
+        color="primary"
+        flat
+        dense
+        icon="lock"
+        label="LOCK DEVICES"
+        @click="lockDevices"
       />
       <q-btn
-      class="bg-green text-white"
-      flat
-      dense
-      label="UNLOCK DEVICES"
-      @click="unlockDevices"
+        v-if="states.podState == PodState.Locked"
+        color="primary"
+        flat
+        dense
+        icon="lock_open"
+        label="UNLOCK DEVICES"
+        @click="unlockDevices"
       />
+
       <q-btn
         color="primary"
         flat
@@ -69,6 +74,8 @@ import DeviceEdit from '@/components/DeviceEdit.vue'
 import DeviceInterface from '@/components/DeviceInterface.vue'
 import Notification from '@/components/Notification.vue'
 import { Device } from '@/libs/device'
+import { PodState } from '@/types/podstate'
+import { statesStore } from '@/stores/states'
 
 export default {
   name: 'Configure',
@@ -79,6 +86,8 @@ export default {
     Notification,
   },
   setup: () => {
+    const states = statesStore()
+
     const deviceList: Ref<Device[]> = ref([])
     const newDevice = ref(false)
     const notifyShow = ref(false)
@@ -102,7 +111,8 @@ export default {
           notifyMsg.value = error as string
         })
 
-      window.location.reload()
+      states.getPodState()
+      getDeviceList()
     }
 
     function unlockDevices(){
@@ -117,7 +127,8 @@ export default {
           notifyKind.value = 'negative'
           notifyMsg.value = error as string
         })
-
+        
+      states.getPodState()
     }
 
     // show the add device dialog window
@@ -216,10 +227,12 @@ export default {
       notifyShow,
       notifyKind,
       notifyMsg,
+      PodState,
       removeDevice,
       selectedDevice,
       showDialog,
       showAddDialog,
+      states,
       updateDevice,
     }
   }
