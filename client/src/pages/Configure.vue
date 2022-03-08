@@ -7,7 +7,26 @@
       </q-toolbar>
     </q-page-sticky>
 
-    <div class="fit row justify-end">
+    <div class="fit row justify-between">
+      <q-btn
+        v-if="states.podState == PodState.Unlocked"
+        color="primary"
+        flat
+        dense
+        icon="lock"
+        label="LOCK DEVICES"
+        @click="lockDevices"
+      />
+      <q-btn
+        v-if="states.podState == PodState.Locked"
+        color="primary"
+        flat
+        dense
+        icon="lock_open"
+        label="UNLOCK DEVICES"
+        @click="unlockDevices"
+      />
+
       <q-btn
         color="primary"
         flat
@@ -55,7 +74,8 @@ import DeviceEdit from '@/components/DeviceEdit.vue'
 import DeviceInterface from '@/components/DeviceInterface.vue'
 import Notification from '@/components/Notification.vue'
 import { Device } from '@/libs/device'
-//import { /*addDevice, getDeviceList, removeDevice, updateDevice*/ } from '@/services/api'
+import { PodState } from '@/types/podstate'
+import { statesStore } from '@/stores/states'
 
 export default {
   name: 'Configure',
@@ -66,6 +86,8 @@ export default {
     Notification,
   },
   setup: () => {
+    const states = statesStore()
+
     const deviceList: Ref<Device[]> = ref([])
     const newDevice = ref(false)
     const notifyShow = ref(false)
@@ -77,6 +99,37 @@ export default {
 
     // pull device list from rust frontend
     getDeviceList()
+
+    function lockDevices() {
+      invoke("lock_devices")
+        .then((response) => {
+          deviceList.value = JSON.parse(response as string)
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
+      states.getPodState()
+      getDeviceList()
+    }
+
+    function unlockDevices(){
+      invoke("unlock_devices")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        })
+        .catch((error) => {
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+        
+      states.getPodState()
+    }
 
     // show the add device dialog window
     function addDeviceDialog() {
@@ -164,6 +217,8 @@ export default {
     }
 
     return {
+      lockDevices,
+      unlockDevices,
       addDeviceDialog,
       addDevice,
       configureDeviceDialog,
@@ -172,10 +227,12 @@ export default {
       notifyShow,
       notifyKind,
       notifyMsg,
+      PodState,
       removeDevice,
       selectedDevice,
       showDialog,
       showAddDialog,
+      states,
       updateDevice,
     }
   }

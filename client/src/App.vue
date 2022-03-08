@@ -20,6 +20,7 @@
     </q-header>
 
     <q-drawer
+      v-if="states.connectState"
       v-model="leftDrawerOpen"
       bordered
       elevated
@@ -27,7 +28,7 @@
       class="bg-grey-2"
     >
       <q-list>
-        <q-item clickable to="/dashboard">
+        <q-item v-if="states.loginState" clickable to="/dashboard">
           <q-item-section avatar>
             <q-icon name="leaderboard" />
           </q-item-section>
@@ -39,7 +40,7 @@
 
         <q-separator />
         
-        <q-item clickable to="/configure">
+        <q-item v-if="states.loginState" clickable to="/configure">
           <q-item-section avatar>
             <q-icon name="settings" />
           </q-item-section>
@@ -51,7 +52,7 @@
 
         <q-separator />
 
-        <q-item clickable to="/manage">
+        <q-item v-if="states.loginState" clickable to="/manage">
           <q-item-section avatar>
             <q-icon name="manage_accounts" />
           </q-item-section>
@@ -62,15 +63,28 @@
         </q-item>
 
         <q-separator />
-
-        <q-item clickable to="/start">
+        
+        <q-item clickable to="/start" @click="logoutUser">
           <q-item-section avatar>
-            <q-icon name="logout" />
+            <q-icon :name="states.loginState ? 'logout' : 'login'" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Logout</q-item-label>
+            <q-item-label>{{states.loginState ? 'Logout' : 'Login'}}</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-separator />
+
+        <q-item clickable to="/start" @click="disconnectPod">
+          <q-item-section avatar>
+            <q-icon name="link_off" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Disconnect</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator />
       </q-list>
     </q-drawer>
 
@@ -78,21 +92,78 @@
       <router-view />
     </q-page-container>
   </q-layout>
+  
+  <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg" />
 </template>
 
 <script lang="ts">
 import { ref } from 'vue'
+import { invoke } from '@tauri-apps/api/tauri'
+
+import Notification from '@/components/Notification.vue'
+import { statesStore } from '@/stores/states'
 
 export default {
   name: 'LayoutDefault',
 
   components: {
+    Notification,
   },
 
   setup () {
+    const states = statesStore()
+    
+    states.getConnectionState()
+    states.getLoginState()
+
+    const notifyShow = ref(false)
+    const notifyKind = ref('positive')
+    const notifyMsg = ref('')
+
+    function disconnectPod() {
+      if (states.connectState) {
+        invoke('disconnect')
+          .then((response) => {
+            states.connectState = false
+            states.loginState = false
+            notifyShow.value = true
+            notifyKind.value = 'positive'
+            notifyMsg.value = response as string
+          })
+          .catch((error) => {
+            notifyShow.value = true
+            notifyKind.value = 'negative'
+            notifyMsg.value = error as string
+          })
+      }
+    }
+
+    function logoutUser() {
+      if (states.loginState) {
+        invoke('logout')
+          .then((response) => {
+            states.loginState = false
+            notifyShow.value = true
+            notifyKind.value = 'positive'
+            notifyMsg.value = response as string
+          })
+          .catch((error) => {
+            notifyShow.value = true
+            notifyKind.value = 'negative'
+            notifyMsg.value = error as string
+          })
+      }
+    }
+
     return {
+      disconnectPod,
       leftDrawerOpen: ref(false),
-      miniState: ref(true)
+      logoutUser,
+      miniState: ref(true),
+      notifyShow,
+      notifyKind,
+      notifyMsg,
+      states,
     }
   }
 }

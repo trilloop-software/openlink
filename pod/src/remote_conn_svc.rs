@@ -1,16 +1,17 @@
 // adapted from quinn example code
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use futures_util::stream::StreamExt;
 use quinn::{Endpoint, ServerConfig};
 use std::{error::Error, sync::Arc};
 use tracing::{error, info};
 use tokio::sync::{mpsc::Receiver, mpsc::Sender};
 
-use super::packet::*;
+use shared::{remote_conn_packet::*};
 
 pub struct RemoteConnSvc {
-    pub rx: Receiver<Packet>,
-    pub tx: Sender<Packet>,
+    pub rx_auth: Receiver<RemotePacket>,
+    pub tx_auth: Sender<RemotePacket>,
+    pub tx_emerg: Sender<u8>,
 }
 
 impl RemoteConnSvc {
@@ -20,14 +21,20 @@ impl RemoteConnSvc {
         let server_addr = "127.0.0.1:6007".parse().unwrap();
         let (server_config, _server_cert) = self.configure_server().unwrap();
         let (endpoint, mut incoming) = Endpoint::server(server_config, server_addr)?;
-        println!("remote_conn_svc running on {}", endpoint.local_addr()?);
+        println!("remote_conn_svc: service running on {}", endpoint.local_addr()?);
 
         while let Some(conn) = incoming.next().await {
-            println!("remote client connecting from {}", conn.remote_address());
+            println!("remove_conn_svc: remote client connecting from {}", conn.remote_address());
             let fut = self.handle_connection(conn);
             if let Err(e) = fut.await {
-                error!("connection failed: {}", e.to_string());
+                error!("remote_conn_svc: connection failed: {}", e.to_string());
             }
+
+            println!("remote_conn_svc: remote client closed");
+            if let Err(e) = self.tx_emerg.send(1).await {
+                eprintln!("remote->emerg failed: {}", e)
+            }
+            // connection closed, trigger emerg_svc to stop pod if PodState::Moving
         }
 
         Ok(())
@@ -46,7 +53,8 @@ impl RemoteConnSvc {
         Arc::get_mut(&mut server_config.transport)
             .unwrap()
             .max_concurrent_uni_streams(0_u8.into())                // force bidirectional streams
-            .keep_alive_interval(std::time::Duration::new(5,0).into());    // not necessarily used now but will be useful for future heartbeat functionality
+            .max_idle_timeout(Some(std::time::Duration::from_millis(100).try_into()?)) // 100ms timeout
+            .keep_alive_interval(std::time::Duration::from_millis(50).into()); // 50ms heartbeat
 
         Ok((server_config, cert_der))
     }
@@ -80,25 +88,32 @@ impl RemoteConnSvc {
     }
 
     /// Receive request from RecvStream
-    /// Decode buffer into valid OpenLink Packet
+    /// Decode buffer into valid OpenLink RemotePacket
     /// Send response on SendStream
     async fn handle_request(&mut self, (mut send, recv): (quinn::SendStream, quinn::RecvStream)) -> Result<()> {
-        let req = recv.read_to_end(64 * 1024)
-            .await
-            .map_err(|e| anyhow!("failed reading request: {}", e))?;
+        let req = match recv.read_to_end(64 * 1024).await {
+            Ok(req) => req,
+            Err(e) => encode(RemotePacket::new(0, vec![s!(e)]))
+        };
 
         let pkt = decode(req);
-        let resp = self.process_packet(pkt).await;
+        let resp: Vec<u8>;
 
-        send.write_all(&resp.unwrap())
-            .await
-            .map_err(|e| anyhow!("failed to send response: {}", e))?;
+        if pkt.cmd_type == 0 {
+            resp = encode(pkt);
+        } else {
+            resp = self.process_packet(pkt).await.unwrap();
+        }
 
-        send.finish()
-            .await
-            .map_err(|e| anyhow!("failed to shutdown stream: {}", e))?;
+        match send.write_all(&resp).await {
+            Ok(()) => (),
+            Err(e) => println!("remote_conn_svc: failed to send response: {}", s!(e))
+        }
 
-        info!("complete!");
+        match send.finish().await {
+            Ok(()) => (),
+            Err(e) => println!("remote_conn_svc: failed to shutdown stream: {}", s!(e))
+        }
 
         Ok(())
     }
@@ -107,23 +122,14 @@ impl RemoteConnSvc {
     /// Receive the result from the auth service and update timestamp
     /// If request to auth_svc errored, return the error as the payload and update timestamp
     /// Return packet as buffer
-    async fn process_packet(&mut self, pkt: Packet) -> Result<Vec<u8>> {
-        let pkt = match self.tx.send(pkt).await {
+    async fn process_packet(&mut self, pkt: RemotePacket) -> Result<Vec<u8>> {
+        let pkt = match self.tx_auth.send(pkt).await {
             Ok(()) => {
-                let resp = self.rx.recv().await;
-                let mut pkt = resp.unwrap();
-                pkt.timestamp = std::time::SystemTime::now();
-                pkt
+                let resp = self.rx_auth.recv().await.unwrap();
+                RemotePacket::new_with_auth(resp.cmd_type, resp.payload, resp.token)
             },
             Err(e) => {
-                let pkt = Packet {
-                    packet_id: s!["OPENLINK"],
-                    version: 1,
-                    cmd_type: 0,
-                    timestamp: std::time::SystemTime::now(),
-                    payload: vec![s![e]]
-                };
-                pkt
+                RemotePacket::new(0, vec![s!(e)])
             }
         };
         

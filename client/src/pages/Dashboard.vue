@@ -7,60 +7,104 @@
       </q-toolbar>
     </q-page-sticky>
 
-    <div class="fit column items-center q-gutter-y-lg">
-      <q-input placeholder="Example: 100000"/>
-      <q-btn class = "same-length" push color="primary" label="Set Course Destination" @click= "setDestination"/>
-      <q-btn class = "same-length" push color="primary" label="Launch Pod" @click= "launch"/>
-      <q-btn class = "same-length" push color="primary" label="Stop Pod" @click= "stop"/>
-      <q-btn class = "same-length" push color="primary" label="Emergency Stop" @click= "emergencyStop"/>
+    <div class="row">
+      <div class="col q-pt-md">
+        <pod-state-display />
+        <controls @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" @params-warning="paramsWarning"/>
+      </div>
+      <div class="col">
+        <telemetry />
+      </div>
     </div>
+
+    <notification v-model:show="notifyShow" :kind="notifyKind" :msg="notifyMsg" />
   </q-page>
 </template>
 
-<style>
-.same-length {
-  width: 250px;
-}
-</style>
-
 <script lang="ts">
+import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
+
+import Controls from '@/components/Controls.vue'
+import Notification from '@/components/Notification.vue'
+import PodStateDisplay from '@/components/PodStateDisplay.vue'
+import Telemetry from '@/components/Telemetry.vue'
+import { statesStore } from '@/stores/states'
+
 export default {
   name: 'Dashboard',
+  components: {
+    Controls,
+    Notification,
+    PodStateDisplay,
+    Telemetry,
+  },
   setup: () => {
-    function setDestination() {
-    invoke("set_destination").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
+    const states = statesStore()
+    states.getPodState()
+
+    const notifyShow = ref(false)
+    const notifyKind = ref('positive')
+    const notifyMsg = ref('')
+
+    function setDestination(distance, maxSpeed) {
+      invoke("set_destination", { params: JSON.stringify({ distance: distance.value, max_speed: maxSpeed.value })})
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
     }
 
-    function launch() {
-    invoke("launch").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
+    function launchPod() {
+      invoke("launch")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
+      states.getPodState()
     }
 
-    function stop() {
-      invoke("stop").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
+    function paramsWarning(warning) {
+      notifyShow.value = true
+      notifyKind.value = 'warning'
+      notifyMsg.value = warning as string
     }
 
-    function emergencyStop() {
-    invoke("emergency_stop").then((response) => {
-        alert("Success: " + response);
-      }).catch((err) =>{
-        alert("Error: " + err);
-      });
+    function stopPod() {
+      invoke("stop")
+        .then((response) => {
+          notifyShow.value = true
+          notifyKind.value = 'positive'
+          notifyMsg.value = response as string
+        }).catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+
+      states.getPodState()
     }
 
-    return {setDestination, launch, stop, emergencyStop}
+    return {
+      launchPod,
+      notifyShow,
+      notifyKind,
+      notifyMsg,
+      paramsWarning,
+      setDestination,
+      stopPod,
+    }
   }
 }
 </script>
