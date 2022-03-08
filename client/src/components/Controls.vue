@@ -1,10 +1,42 @@
 <template>
   <div class="fit column items-center q-gutter-y-lg">
-    <q-input v-model="distance" placeholder="Distance in meters" />
-    <q-input v-model="maxSpeed" placeholder="Speed in km/h" />
-    <q-btn class="same-length" :disabled="states.podState != PodState.Locked" push color="primary" label="Set Destination" @click="setDestination" />
-    <q-btn class="same-length" :disabled="states.podState != PodState.Locked" push color="primary" label="Launch Pod" @click="launchPod" />
-    <q-btn class="same-length" :disabled="states.podState != PodState.Moving" push color="primary" label="Stop Pod" @click="stopPod" />
+    <q-input
+      class="q-pt-xl"
+      dense
+      filled
+      v-model.number="distance"
+      label="Distance (meters)"
+    />
+    <q-input
+      dense
+      filled
+      v-model.number="maxSpeed"
+      label="Speed (KM/H)"
+    />
+    <q-btn
+      class="same-length"
+      :disabled="states.podState != PodState.Locked"
+      push
+      color="primary"
+      label="Set Destination"
+      @click="setDestination"
+    />
+    <q-btn
+      class="same-length"
+      :disabled="states.podState != PodState.Locked"
+      push
+      color="primary"
+      label="Launch Pod"
+      @click="launchPod"
+    />
+    <q-btn
+      class="same-length"
+      :disabled="states.podState != PodState.Moving"
+      push
+      color="primary"
+      label="Stop Pod"
+      @click="stopPod"
+    />
   </div>
 </template>
 
@@ -23,7 +55,7 @@ import { statesStore } from '@/stores/states'
 
 export default {
   name: 'Controls',
-  emits: ['update:state','launch-pod','set-destination','stop-pod'],
+  emits: ['update:state','launch-pod','params-warning','set-destination','stop-pod'],
   setup: (props: any, { emit }) => {
     const states = statesStore()
 
@@ -35,7 +67,15 @@ export default {
     }
 
     function setDestination() {
-      emit('set-destination', distance, maxSpeed)
+      if (isNaN(distance.value)) {
+        emit('params-warning', 'Please enter a valid distance')
+      } else {
+        if (isNaN(maxSpeed.value)) {
+          emit('params-warning', 'Please enter a valid max speed')
+        } else {
+          emit('set-destination', distance, maxSpeed)
+        }
+      }
     }
 
     function stopPod() {

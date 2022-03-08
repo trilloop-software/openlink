@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col q-pt-md">
         <pod-state-display />
-        <controls @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" />
+        <controls @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" @params-warning="paramsWarning"/>
       </div>
       <div class="col">
         <telemetry />
@@ -43,14 +43,11 @@ export default {
     const states = statesStore()
     states.getPodState()
 
-    const distance = ref(undefined)
-    const maxSpeed = ref(undefined)
-
     const notifyShow = ref(false)
     const notifyKind = ref('positive')
     const notifyMsg = ref('')
 
-    function setDestination() {
+    function setDestination(distance, maxSpeed) {
       invoke("set_destination", { params: JSON.stringify({ distance: distance.value, max_speed: maxSpeed.value })})
         .then((response) => {
           notifyShow.value = true
@@ -78,6 +75,12 @@ export default {
       states.getPodState()
     }
 
+    function paramsWarning(warning) {
+      notifyShow.value = true
+      notifyKind.value = 'warning'
+      notifyMsg.value = warning as string
+    }
+
     function stopPod() {
       invoke("stop")
         .then((response) => {
@@ -94,12 +97,11 @@ export default {
     }
 
     return {
-      distance,
       launchPod,
-      maxSpeed,
       notifyShow,
       notifyKind,
       notifyMsg,
+      paramsWarning,
       setDestination,
       stopPod,
     }

@@ -15,6 +15,10 @@ pub async fn launch(conn_state: State<'_, Connection>, token: State<'_, Token>) 
         Err(e) => return Err(s!(e))
     };
 
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
+
     Ok(data.payload[0].clone())
 }
 
@@ -25,7 +29,7 @@ pub async fn set_destination(params: String, conn_state: State<'_, Connection>, 
 
     let token = s!(&*token.0.lock().await);
 
-    let params: LaunchParams = match serde_json::from_str(&params) {
+    let params = match serde_json::from_str::<LaunchParams>(&params) {
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
@@ -36,6 +40,10 @@ pub async fn set_destination(params: String, conn_state: State<'_, Connection>, 
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
+
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
 
     Ok(data.payload[0].clone())
 }
@@ -51,6 +59,10 @@ pub async fn stop(conn_state: State<'_, Connection>, token: State<'_, Token>) ->
         Ok(p) => p,
         Err(e) => return Err(s!(e))
     };
+
+    if data.cmd_type == 0 {
+        return Err(s![data.payload[0]])
+    }
 
     Ok(data.payload[0].clone())
 }

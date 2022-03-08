@@ -1,6 +1,6 @@
 <template>
   <q-input class="connect-inputs" v-model="ipaddr" filled :type="text" placeholder="IP Address" />
-  <q-input class="connect-inputs" v-model="port" filled :type="text" placeholder="Port" />
+  <q-input class="connect-inputs" v-model.number="port" filled :type="text" placeholder="Port" />
   <q-btn class="connect-inputs" push color="primary" label="Connect" @click="connectToPod" />
 </template>
 
