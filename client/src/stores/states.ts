@@ -8,6 +8,7 @@ export const statesStore = defineStore({
     connectState: false,
     loginState: false,
     podState: PodState.Unlocked,
+    usergroupState: 0,
   }),
   actions: {
     changePodState(response) {
@@ -40,7 +41,6 @@ export const statesStore = defineStore({
           .then((response) => this.changePodState(response))
           .catch((error) => alert(error))
       }
-      
     },
   }
 })

@@ -18,7 +18,7 @@ import { ref } from 'vue'
 
 export default {
   name: 'Login',
-  emits: ['loginSuccess','loginError','warning'],
+  emits: ['login-success','login-error','set-usergroup','warning'],
   setup: (props: any, { emit }) => {
     const hidePassword = ref(true)
     const password = ref("")
@@ -39,10 +39,11 @@ export default {
 
       invoke("login", { username: username.value, password: password.value })
         .then((response) => {
-          emit('loginSuccess', response)
+          emit('login-success', response[0])
+          emit('set-usergroup', response[1])
         })
         .catch((error) => {
-          emit('loginError', error)
+          emit('login-error', error)
         })
     }
 

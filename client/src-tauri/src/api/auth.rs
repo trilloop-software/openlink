@@ -15,7 +15,7 @@ pub async fn check_auth(token: State<'_, Token>) -> Result<bool, bool> {
 }
 
 #[command]
-pub async fn login(username: String, password: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<String, String> {
+pub async fn login(username: String, password: String, conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<Vec<String>, String> {
     // ensure valid connection to pod computer
     let conn = &*conn_state.0.lock().await;
     let conn = conn_test!(conn);
@@ -39,7 +39,7 @@ pub async fn login(username: String, password: String, conn_state: State<'_, Con
     }
 
     // return result to vue frontend
-    Ok(data.payload[0].clone())
+    Ok(data.payload.clone())
 }
 
 #[command]

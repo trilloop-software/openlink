@@ -4,12 +4,12 @@
     <img id="logo" alt="OpenLink logo" src="../assets/logo.svg">
 
     <template v-if="!states.connectState">
-      <connect @connectionSuccess="connectionSuccess" @connectionError="connectionError" @warning="warning" />
+      <connect @connection-success="connectionSuccess" @connection-error="connectionError" @warning="warning" />
     </template>
       
     <template v-else>
       <template v-if="!states.loginState">
-        <login @loginSuccess="loginSuccess" @loginError="loginError" @warning="warning" />
+        <login @login-success="loginSuccess" @login-error="loginError" @set-usergroup="setUsergroup" @warning="warning" />
       </template>
       <template v-else>
         <span class="text-center text-h4 text-primary text-weight-medium">LOGGED IN</span>
@@ -70,6 +70,10 @@ export default {
       notifyMsg.value = error
     }
 
+    function setUsergroup(response) {
+      states.usergroupState = parseInt(response)
+    }
+
     function warning(error) {
       notifyShow.value = true
       notifyKind.value = 'warning'
@@ -84,6 +88,7 @@ export default {
       connectionError,
       loginSuccess,
       loginError,
+      setUsergroup,
       states,
       warning,
     }
