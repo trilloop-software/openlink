@@ -1,5 +1,4 @@
 <template>
-  <button @click="getTelemetry" label="GET" />
   <div v-if="states.podState == PodState.Unlocked" class="column items-center q-mt-xl">
     <span class="text-grey-3 text-h1 text-weight-bold">N/A</span>
   </div>
@@ -61,7 +60,6 @@
 <script lang="ts">
 import { PodState } from '@/types/podstate'
 import { statesStore } from '@/stores/states'
-//import { TelemetryData } from '@/types/telemetry'
 
 export default {
   name: 'Telemetry',
