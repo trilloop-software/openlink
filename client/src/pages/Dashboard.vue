@@ -10,7 +10,12 @@
     <div class="row">
       <div class="col-4 q-pt-md">
         <pod-state-display />
-        <controls @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" @params-warning="paramsWarning"/>
+        <controls 
+          @launch-pod="launchPod" 
+          @set-destination="setDestination" 
+          @stop-pod="stopPod" 
+          @params-warning="paramsWarning"
+        />
       </div>
       <div class="col-8">
         <telemetry :data="telemetryData" @get-telemetry="getTelemetry" />
