@@ -34,6 +34,7 @@ async fn main() {
       remote_conn::check_conn,
       remote_conn::connect,
       remote_conn::disconnect,
+      telemetry::get_telemetry,
       users::add_user,
       users::get_user_list,
       users::remove_user,

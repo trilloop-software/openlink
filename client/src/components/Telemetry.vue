@@ -1,26 +1,32 @@
 <template>
-  <h2>Telemetry Data</h2>
-  <v-simple-table id = "telemetry" width="100%">
-      <thead>
-        <tr>
-          <th class="text-left">
-            Category
-          </th>
-          <th class="text-left">
-            Value
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in data"
-          :key="item.value"
-        >
-          <td>{{ item.category }}</td>
-          <td>{{ item.value }}</td>
-        </tr>
-      </tbody>
-  </v-simple-table>
+  <button @click="getTelemetry" label="GET" />
+  <div v-if="states.podState == PodState.Unlocked" class="column items-center q-mt-xl">
+    <span class="text-grey-3 text-h1 text-weight-bold">N/A</span>
+  </div>
+  <div v-else>
+    <h2>Telemetry Data</h2>
+      <v-simple-table id = "telemetry" width="100%">
+          <thead>
+            <tr>
+              <th class="text-left">
+                Category
+              </th>
+              <th class="text-left">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="item in data"
+              :key="item.value"
+            >
+              <td>{{ item.field_name }}</td>
+              <td>{{ item.field_value }}</td>
+            </tr>
+          </tbody>
+      </v-simple-table>
+  </div>
 </template>
 
 <style>
@@ -52,19 +58,42 @@
 
 </style>
 
-<script>
+<script lang="ts">
+import { PodState } from '@/types/podstate'
+import { statesStore } from '@/stores/states'
+//import { TelemetryData } from '@/types/telemetry'
 
 export default {
-    data() {
-      return {
-        data: [
-          {category: 'Accelerometer', value: 0},
-          {category: 'Brake Temperature', value: 50},
-          {category: 'Battery Temperature', value: 30},
-          {category: "Battery Current", value: 12}
-        ]
+  name: 'Telemetry',
+  props: {
+    data: { default: [] }
+  },
+  emits: ['get-telemetry'],
+  setup: (props: any, { emit }) => {
+    const states = statesStore()
+    const tele_data = [
+      {category: 'Accelerometer', value: 0},
+      {category: 'Brake Temperature', value: 50},
+      {category: 'Battery Temperature', value: 30},
+      {category: "Battery Current", value: 12}
+    ]
+
+    getTelemetry()
+    setInterval(getTelemetry, 1000)
+
+    function getTelemetry() {
+      if (states.podState != PodState.Unlocked) {
+        emit('get-telemetry')
+      }
     }
-  }
+
+    return {
+      getTelemetry,
+      PodState,
+      states,
+      tele_data,
+    }
+  },
 }
 
 </script>
