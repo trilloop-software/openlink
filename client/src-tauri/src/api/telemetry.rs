@@ -5,7 +5,9 @@ use super::{super::{Connection, Token}, remote_conn::*};
 
 #[command]
 pub async fn get_telemetry(conn_state: State<'_, Connection>, token: State<'_, Token>) -> Result<Vec<String>, String> {
+    println!("LOCKING");
     let conn = &*conn_state.0.lock().await;
+    println!("unLOCKING");
     let conn = conn_test!(conn);
 
     let token = s!(&*token.0.lock().await);
