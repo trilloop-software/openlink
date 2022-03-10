@@ -1,6 +1,6 @@
 use super::pod_packet::*;
 use super::pod_packet_payload::*;
-use shared::{device::*, launch::*};
+use shared::device::*;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -19,17 +19,17 @@ pub struct PodConnSvc {
     pub conn_list: Vec<TcpStream>,
     
     pub device_list: Arc<Mutex<Vec<Device>>>,
-    pub launch_params: Arc<Mutex<LaunchParams>>,
     pub pod_state: Arc<Mutex<PodState>>,
 
-    pub rx_ctrl: Receiver<u8>,
-    pub tx_ctrl: Sender<u8>,
+    pub rx_ctrl: Receiver<PodPacket>,
+    pub tx_ctrl: Sender<PodPacket>,
     pub rx_emerg: Receiver<u8>,
     pub tx_emerg: Sender<u8>,
     pub rx_link: Receiver<PodPacket>,
     pub tx_link: Sender<PodPacket>,
     //pub rx_tele: Receiver<i32>,
     //pub tx_tele: Sender<i32>,
+    pub rx_trip: Receiver<u8>,
 }
 
 /// pod_conn_svc opens and manages tcp streams to all embedded devices
@@ -63,6 +63,34 @@ impl PodConnSvc {
                             if let Err(e) = self.tx_emerg.send(0).await {
                                 eprintln!("pod->emerg failed: {}", e);
                             };
+                        }
+                    }
+
+                }
+
+                //handle commands from ctrl_svc
+                packet = self.rx_ctrl.recv() =>{
+
+                    let mut pkt = packet.unwrap().clone();
+                    let link_cmd = pkt.cmd_type;
+                    let payload = decode_payload(pkt.payload);
+
+                    //parse the command, and act based on it's command type
+                    match link_cmd{
+                        //cmd to engage brakes
+                        255=>{
+                            self.engage_brakes().await;
+
+                            //send ACK back to ctrl_svc
+                            self.tx_ctrl.send(PodPacket::new(254,encode_payload(PodPacketPayload::new()))).await;
+                        }
+                        //cmd to launch pod
+                        254=>{
+                            self.launch().await;
+                        }
+                        //cmd to activate device specific command
+                        _=>{
+                            
                         }
                     }
 
@@ -247,6 +275,9 @@ impl PodConnSvc {
                 /*tele_cmd = self.rx_tele.recv() => {
                     self.get_telemetry()
                 }*/
+                _ = self.rx_trip.recv() => {
+                    self.engage_brakes().await;
+                }
             }
         }
     }
@@ -292,13 +323,42 @@ impl PodConnSvc {
 
         Ok(())
     }
+    
+    async fn engage_brakes(&mut self) {
+        //send the braking command
+        //to each device
+        let num = self.device_list.lock().await.len();
+
+        for index in 0..num{
+            let res = match self.send_cmd(index,255, PodPacketPayload::new()).await{
+                Ok(()) => 1,
+                Err(()) => 0,
+            };
+            if let Err(e) = self.tx_ctrl.send(PodPacket::new(255,Vec::<u8>::new())).await {
+                eprintln!("pod->ctrl failed: {}", e);
+            };
+        }
+    }
+
+    async fn launch(&mut self) {
+        //send the launch command
+        //to each device
+        let num = self.device_list.lock().await.len();
+
+        for index in 0..num{
+            let res = match self.send_cmd(index,254, PodPacketPayload::new()).await{
+                Ok(()) => 1,
+                Err(()) => 0,
+            };
+            if let Err(e) = self.tx_ctrl.send(PodPacket::new(255,Vec::<u8>::new())).await {
+                eprintln!("pod->ctrl failed: {}", e);
+            };
+        }
+    }
 
     async fn send_cmd(&mut self, index:usize, cmd: u8, payload: PodPacketPayload)-> Result<(), ()> {
 
-        // send command to associated devices
-        //  -returns array of available commands and array of device fields
-        //  -figure out best way to store this and query it
-        println!("sending cmd to device");
+        //println!("sending cmd to device");
 
         //contruct the packet
         let packet = encode(PodPacket::new(cmd, encode_payload(payload)));
@@ -319,24 +379,31 @@ impl PodConnSvc {
             match self.conn_list[index].read(&mut buf).await{
                 Ok(size) => {
 
-                    println!("received response to command");
+                    //println!("received response to command");
 
                     //decode the response to the command
                     let resp = decode(buf[0..size].to_vec());
                     let payload = decode_payload(resp.payload);
-                    println!("decoded response to command");
+                    //println!("decoded response to command");
 
                     //process the response, based on the type of command that it is responding to
                     //TODO: check that the cmd_type of the response matches up
                     match cmd {
-                        //response to an emergency command
+                        //response to an emergency/braking command
                         255 =>{
-
+                            println!("pod_conn: Braking Sequence successful");
+                        },
+                        254 =>{
+                            println!("pod_conn: Launching Sequence successful");
+                            //send ACK back to ctrl_svc
+                            if let Err(e) = self.tx_ctrl.send(PodPacket::new(254,encode_payload(PodPacketPayload::new()))).await {
+                                eprintln!("pod->ctrl failed: {}", e);
+                            }
                         },
                         //error response 
                         0 =>{
 
-                        }
+                        },
                         //response to a discovery command
                         1 =>{
 
@@ -390,8 +457,9 @@ impl PodConnSvc {
                         2 =>{
                             println!("Error: received response to disconnect command");
                         }
-
+                        //response to a launch sequence command
                         3 => {
+                            println!("Launching Sequence successful");
 
                         }
                         // commands 4-254 are not reserved for any particular command 
