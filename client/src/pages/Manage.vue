@@ -14,7 +14,7 @@
         dense
         icon-right="add_circle"
         label="ADD USER"
-        @click="showAddDialog = true"
+        @click="addUserDialog"
       />
     </div>
 
@@ -29,7 +29,7 @@
       @row-click="editUser"
     />
 
-    <user-add v-model:show="showAddDialog" @add-user="addUser" />
+    <user-add v-model:show="showAddDialog" :user="newUser" @add-user="addUser" />
 
     <user-edit 
       v-model:mode="editMode"
@@ -80,6 +80,7 @@ export default {
         format: (val) => getUserGroup(val),
       }
     ]
+    const newUser = ref(new User)
 
     const notifyShow = ref(false)
     const notifyKind = ref('positive')
@@ -109,6 +110,12 @@ export default {
         })
       
       showAddDialog.value = false
+      newUser.value.clear()
+    }
+
+    function addUserDialog() {
+      newUser.value.clear()
+      showAddDialog.value = true
     }
 
     function editUser(evt, user) {
@@ -132,7 +139,7 @@ export default {
     function removeUser(user: UserSecure) {
       invoke("remove_user", { name: user.name })
         .then(response => {
-          userList.value.splice[userList.value.findIndex(el => el.name == user.name), 1]
+          userList.value.splice(userList.value.findIndex(el => el.name == user.name), 1)
           notifyShow.value = true
           notifyKind.value = 'positive'
           notifyMsg.value = response as string
@@ -188,10 +195,12 @@ export default {
 
     return {
       addUser,
+      addUserDialog,
       col,
       editMode,
       editUser,
       getUserList,
+      newUser,
       notifyShow,
       notifyKind,
       notifyMsg,

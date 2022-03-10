@@ -11,14 +11,14 @@
         <q-input
           dense
           filled
-          v-model="user.name"
+          v-model="newUser.name"
           type="text"
           label="Name"
         />
         <q-input
           dense
           filled
-          v-model="user.pwd"
+          v-model="newUser.pwd"
           :type="hidePassword ? 'password' : 'text'"
           label="Password"
         >
@@ -33,7 +33,7 @@
         <q-select
           dense
           filled
-          v-model.number="user.ugroup"
+          v-model.number="newUser.ugroup"
           label="Usergroup"
           :options="userGroups"
           map-options
@@ -49,7 +49,7 @@
         color="primary"
         label="ADD"
         icon-right="add"
-        @click="addNewUser(user)"
+        @click="addNewUser(newUser)"
       />
     </q-card>
   </q-dialog>
@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, PropType } from 'vue'
 import { useModelWrapper } from '@/utils/modelWrapper'
 import { User } from "@/libs/user"
 
@@ -65,11 +65,11 @@ export default {
   name: 'UserAdd',
   props: {
     show: { type: Boolean, default: false },
+    user: { type: Object as PropType<User>, default: new User }
   },
-  emits: ['update:show','add-user'],
+  emits: ['update:show','update:user','add-user'],
   setup: (props: any, { emit }) => {
     const hidePassword = ref(true)
-    const user = ref(new User)
     const userGroups = [
       { label: 'Admin', value: 255 },
       { label: 'Software Team', value: 2 },
@@ -84,9 +84,9 @@ export default {
     return {
       addNewUser,
       hidePassword,
+      newUser: useModelWrapper(props, emit, 'user'),
       showDialog: useModelWrapper(props, emit, 'show'),
       userGroups,
-      user,
     }
   }
 }
