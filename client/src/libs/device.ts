@@ -111,7 +111,7 @@ export class Inverter extends Device implements IDevice {
   ip_address = '127.0.0.1'
   port = 0
   connection_status = ConnectionStatus.Connected
-  device_status = DeviceStatus.Unsafe
+  device_status = DeviceStatus.Operational
   fields = []
   commands = []
 }
@@ -123,8 +123,8 @@ export class Sensor extends Device implements IDevice {
   device_type = DeviceType.Sensor
   ip_address = '127.0.0.1'
   port = 0
-  connection_status = ConnectionStatus.Disconnected
-  device_status = DeviceStatus.Unsafe
+  connection_status = ConnectionStatus.Connected
+  device_status = DeviceStatus.Operational
   fields = []
   commands = []
 }

@@ -28,7 +28,7 @@
       class="bg-grey-2"
     >
       <q-list>
-        <q-item v-if="states.loginState" clickable to="/dashboard">
+        <q-item v-if="states.loginState && (states.usergroupState == 1 || states.usergroupState == 255)" clickable to="/dashboard">
           <q-item-section avatar>
             <q-icon name="leaderboard" />
           </q-item-section>
@@ -40,7 +40,7 @@
 
         <q-separator />
         
-        <q-item v-if="states.loginState" clickable to="/configure">
+        <q-item v-if="states.loginState && (states.usergroupState == 2 || states.usergroupState == 255)" clickable to="/configure">
           <q-item-section avatar>
             <q-icon name="settings" />
           </q-item-section>
@@ -52,7 +52,7 @@
 
         <q-separator />
 
-        <q-item v-if="states.loginState" clickable to="/manage">
+        <q-item v-if="states.loginState && states.usergroupState == 255" clickable to="/manage">
           <q-item-section avatar>
             <q-icon name="manage_accounts" />
           </q-item-section>
@@ -126,6 +126,7 @@ export default {
           .then((response) => {
             states.connectState = false
             states.loginState = false
+            states.usergroupState = 0
             notifyShow.value = true
             notifyKind.value = 'positive'
             notifyMsg.value = response as string
@@ -143,6 +144,7 @@ export default {
         invoke('logout')
           .then((response) => {
             states.loginState = false
+            states.usergroupState = 0
             notifyShow.value = true
             notifyKind.value = 'positive'
             notifyMsg.value = response as string

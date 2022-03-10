@@ -98,6 +98,7 @@ export default {
     const selectedDevice = ref(new Device)
 
     // pull device list from rust frontend
+    states.getPodState()
     getDeviceList()
 
     function lockDevices() {

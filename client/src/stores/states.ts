@@ -8,8 +8,23 @@ export const statesStore = defineStore({
     connectState: false,
     loginState: false,
     podState: PodState.Unlocked,
+    usergroupState: 0,
   }),
   actions: {
+    changePodState(response) {
+      if (response == "\"Unlocked\"") {
+        this.podState = PodState.Unlocked
+      }
+      else if (response == "\"Locked\"") {
+        this.podState = PodState.Locked
+      }
+      else if (response == "\"Moving\"") {
+        this.podState = PodState.Moving
+      }
+      else if (response == "\"Braking\"") {
+        this.podState = PodState.Braking
+      }
+    },
     getConnectionState() {
       invoke('check_conn')
         .then(() => this.connectState = true)
@@ -23,23 +38,9 @@ export const statesStore = defineStore({
     getPodState() {
       if (this.connectState && this.podState) {
         invoke('get_pod_state')
-          .then((response) => {
-            if (response == "\"Unlocked\"") {
-              this.podState = PodState.Unlocked
-            }
-            else if (response == "\"Locked\"") {
-              this.podState = PodState.Locked
-            }
-            else if (response == "\"Moving\"") {
-              this.podState = PodState.Moving
-            }
-            else if (response == "\"Braking\"") {
-              this.podState = PodState.Braking
-            }
-          })
+          .then((response) => this.changePodState(response))
           .catch((error) => alert(error))
       }
-      
     },
   }
 })

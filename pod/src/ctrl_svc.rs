@@ -5,6 +5,8 @@ use std::{sync::Arc, ops::Range};
 /* POD STATE COMMANDS
 64 - Get state
 Returns PodState
+68 - Set Destination
+Sets launch_params
 69 - Launch
 Launches pod
 99 - Brakes
@@ -12,12 +14,15 @@ Payload should be a bool to engage/disengage
 */
 
 use shared::{launch::*, remote_conn_packet::*};
+use crate::pod_packet::PodPacket;
+use crate::pod_packet_payload::*;
+
 use super::pod_conn_svc::PodState;
 const DIST_RANGE: Range<f32> = 0.0..250.0;
 const SPEED_RANGE: Range<f32> = 0.0..111.0;
 
 pub struct CtrlSvc { 
-    pub launch_params: Arc<Mutex<LaunchParams>>,
+    pub launch_params: LaunchParams,
 
     //State things
     pub pod_state: Arc<Mutex<PodState>>,
@@ -26,11 +31,14 @@ pub struct CtrlSvc {
     pub rx_auth : Receiver<RemotePacket>,
     pub tx_auth : Sender<RemotePacket>,
 
-    pub rx_pod : Receiver<u8>,
-    pub tx_pod: Sender<u8>
+    pub rx_pod : Receiver<PodPacket>,
+    pub tx_pod: Sender<PodPacket>,
+
+    pub tx_trip: Sender<LaunchParams>,
 }
 
 impl CtrlSvc {
+    /// Main service task for controls service
     pub async fn run(mut self) -> Result<()> {
         println!("ctrl_svc: service running");
 
@@ -58,6 +66,7 @@ impl CtrlSvc {
         Ok(())
     }
 
+    /// Return the current state of the pod to the remote client
     async fn get_state(&mut self) -> Result<RemotePacket, ()> {
         if let Ok(pod_status_json) = serde_json::to_string(&*self.pod_state.lock().await) {
             Ok(RemotePacket::new(65, vec![pod_status_json]))
@@ -66,30 +75,65 @@ impl CtrlSvc {
         }
     }
     
+    /// Launch the pod if in valid state
     async fn launch_pod(&mut self) -> Result<RemotePacket, ()> {
-        match *self.pod_state.lock().await {
-            PodState::Locked => {
-                // send launch command to pod_conn_svc
-                // wrap Ok() in await of recv channel from pod_conn_svc
-                // change state to PodState::Moving in pod_conn_svc or here?
-                Ok(RemotePacket::new(69, vec![s!("Pod launched")]))
-            },
-            _ => return Ok(RemotePacket::new(0, vec![s!("PodState not locked, cannot launch")])),
+
+        let launch = match *self.pod_state.lock().await {
+            PodState::Locked => true,
+            _ => false
+        };
+
+        if launch {
+            // send launch command to pod_conn_svc
+            if let Err(e) = self.tx_pod.send(PodPacket::new(254,encode_payload(PodPacketPayload::new()))).await {
+                eprintln!("ctrl->pod failed: {}", e);
+            }
+
+            //receive the ACK from pod_conn_svc
+            self.rx_pod.recv().await;
+
+            println!("ctrl: received ACK from pod_conn");
+
+            // Once OK() is received, change state to PodState::Moving
+            *self.pod_state.lock().await = PodState::Moving;
+
+            if let Err(e) = self.tx_trip.send(self.launch_params.clone()).await {
+                eprintln!("ctrl->trip failed: {}", e);
+            }
+
+            println!("Pod launched");
+            // return the appropriate ACK packet wrapped in OK()
+            return Ok(RemotePacket::new(69, vec![s!("Pod launched")]))
+        } else {
+            return Ok(RemotePacket::new(0, vec![s!("PodState not locked, cannot launch")]))
         }
+
     }
 
+    /// Engage brakes if in valid state
     async fn engage_brakes(&mut self) -> Result<RemotePacket, ()> {
-        match *self.pod_state.lock().await {
-            PodState::Moving => {
-                // send braking command to pod_conn_svc
-                // wrap Ok() in await of recv channel from pod_conn_svc
-                // change state to PodState::Braking in pod_conn_svc or here?
-                Ok(RemotePacket::new(96, vec![s!("Pod brakes engaged")]))
-            },
-            _ => return Ok(RemotePacket::new(0, vec![s!("PodState not moving, cannot brake")]))
+        let moving = match *self.pod_state.lock().await {
+            PodState::Moving => true,
+            _ => false
+        };
+
+        if moving {
+            if let Err(e) = self.tx_pod.send(PodPacket::new(255, encode_payload(PodPacketPayload::new()))).await {
+                eprintln!("ctrl->pod failed: {}", e);
+            }
+
+            self.rx_pod.recv().await;
+
+            *self.pod_state.lock().await = PodState::Braking;
+            println!("Pod braking");
+
+            return Ok(RemotePacket::new(96, vec![s!("Pod brakes engaged")]))
+        } else {
+            return Ok(RemotePacket::new(0, vec![s!("PodState not moving, cannot brake")]))
         }
     }
 
+    /// Set launch_params to be used by pod_conn_svc
     async fn set_destination(&mut self, req: String) -> Result<RemotePacket, ()> {
         if let Ok(params) = serde_json::from_str::<LaunchParams>(&req) {
             match params.distance {
@@ -100,7 +144,7 @@ impl CtrlSvc {
                             None => return Ok(RemotePacket::new(0, vec![s!("Invalid max speed")])),
                             Some(s) => {
                                 if SPEED_RANGE.contains(&s) {
-                                    *self.launch_params.lock().await = params;
+                                    self.launch_params = params;
                                     return Ok(RemotePacket::new(65, vec![s!("Launch parameters set")]))                
                                 } else {
                                     return Ok(RemotePacket::new(0, vec![s!("Max speed out of valid range")]))

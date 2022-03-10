@@ -8,12 +8,17 @@
     </q-page-sticky>
 
     <div class="row">
-      <div class="col q-pt-md">
+      <div class="col-4 q-pt-md">
         <pod-state-display />
-        <controls @launch-pod="launchPod" @set-destination="setDestination" @stop-pod="stopPod" @params-warning="paramsWarning"/>
+        <controls 
+          @launch-pod="launchPod" 
+          @set-destination="setDestination" 
+          @stop-pod="stopPod" 
+          @params-warning="paramsWarning"
+        />
       </div>
-      <div class="col">
-        <telemetry />
+      <div class="col-8">
+        <telemetry :data="telemetryData" @get-telemetry="getTelemetry" />
       </div>
     </div>
 
@@ -43,6 +48,8 @@ export default {
     const states = statesStore()
     states.getPodState()
 
+    const telemetryData = ref([])
+
     const notifyShow = ref(false)
     const notifyKind = ref('positive')
     const notifyMsg = ref('')
@@ -53,7 +60,21 @@ export default {
           notifyShow.value = true
           notifyKind.value = 'positive'
           notifyMsg.value = response as string
-        }).catch((error) =>{
+        })
+        .catch((error) =>{
+          notifyShow.value = true
+          notifyKind.value = 'negative'
+          notifyMsg.value = error as string
+        })
+    }
+
+    function getTelemetry() {
+      invoke("get_telemetry")
+        .then((response) => {
+          telemetryData.value = JSON.parse(response[0] as string)
+          states.changePodState(response[1])
+        })
+        .catch((error) => {
           notifyShow.value = true
           notifyKind.value = 'negative'
           notifyMsg.value = error as string
@@ -66,7 +87,8 @@ export default {
           notifyShow.value = true
           notifyKind.value = 'positive'
           notifyMsg.value = response as string
-        }).catch((error) =>{
+        })
+        .catch((error) =>{
           notifyShow.value = true
           notifyKind.value = 'negative'
           notifyMsg.value = error as string
@@ -87,7 +109,8 @@ export default {
           notifyShow.value = true
           notifyKind.value = 'positive'
           notifyMsg.value = response as string
-        }).catch((error) =>{
+        })
+        .catch((error) =>{
           notifyShow.value = true
           notifyKind.value = 'negative'
           notifyMsg.value = error as string
@@ -97,6 +120,7 @@ export default {
     }
 
     return {
+      getTelemetry,
       launchPod,
       notifyShow,
       notifyKind,
@@ -104,6 +128,7 @@ export default {
       paramsWarning,
       setDestination,
       stopPod,
+      telemetryData,
     }
   }
 }

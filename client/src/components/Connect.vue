@@ -10,7 +10,7 @@ import { ref } from 'vue'
 
 export default {
   name: 'Connect',
-  emits: ['connectionSuccess','connectionError','warning'],
+  emits: ['connection-success','connection-error','warning'],
   setup: (props: any, { emit }) => {
     const ipaddr = ref("")
     const port = ref("")
@@ -28,10 +28,10 @@ export default {
 
       invoke("connect", { addr: `${ipaddr.value}:${port.value}` })
         .then((response) => {
-          emit('connectionSuccess', response)
+          emit('connection-success', response)
         })
         .catch((error) => {
-          emit('connectionError', error)
+          emit('connection-error', error)
         })
     }
 
