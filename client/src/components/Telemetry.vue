@@ -80,7 +80,7 @@ export default {
     setInterval(getTelemetry, 1000)
 
     function getTelemetry() {
-      if (states.podState != PodState.Unlocked && states.podState != PodState.Locked) {
+      if (states.podState != PodState.Unlocked) {
         emit('get-telemetry')
       }
     }
