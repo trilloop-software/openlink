@@ -27,5 +27,5 @@ From the client directory:
 
 ```
 yarn install
-yarn tauri:serve
+yarn tauri dev
 ```

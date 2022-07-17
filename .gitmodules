@@ -1,0 +1,9 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/trilloop-software/openlink-client
+[submodule "pod"]
+	path = pod
+	url = https://github.com/trilloop-software/openlink-pod
+[submodule "shared"]
+	path = shared
+	url = https://github.com/trilloop-software/openlink-shared
